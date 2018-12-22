@@ -1,0 +1,32 @@
+# generic
+*.class
+*.log
+*.bak
+*.tap
+logs
+tmp
+*.swp
+backup
+
+# sbt specific
+dist/*
+target/
+
+# eclipse specific
+.settings
+.settings/
+.classpath
+.project
+.cache
+.metadata
+
+# intellij specific
+.idea
+.idea_modules
+platform.iml
+*.iml
+
+# scala metals specific
+.metals
+.bloop
+
