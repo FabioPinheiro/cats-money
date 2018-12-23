@@ -18,7 +18,8 @@ libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core" % "1.5.0",
   "org.typelevel" %% "cats-laws" % "1.5.0" % Test, //or `cats-testkit` if you are using ScalaTest
   "org.typelevel" %% "cats-testkit" % "1.5.0" % Test,
-  "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % "1.2.0" % Test
+  "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % "1.2.0" % Test,
+  "org.specs2" %% "specs2-core" % "4.3.4" % Test
 )
 
 addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.3")

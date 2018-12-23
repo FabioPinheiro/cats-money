@@ -23,7 +23,8 @@ object CurrencyY {
 
   type CurrencyY = CY
   abstract sealed class CY(name: String)
-  val CYValues: Seq[CY] = Seq(XXX, XTS, XAU, USD, GBP, EUR) //for test
+  //val CYValues: Seq[CY] = Seq(XXX, XTS, XAU, USD, GBP, EUR) //for test
+  val CYValues: Seq[CY] = Seq(USD, GBP, EUR) //for test
 
 
   object XCY {
@@ -31,13 +32,13 @@ object CurrencyY {
     def empty = apply()
   }
 
-  class FFF(name: String) extends CY(name) //TEST MONOR TYPES
+  class FFF(name: String) extends CY(name) //SUPPORT & TEST Minor TYPES
   case object FFF extends FFF("XXX0")
   case object FFF1 extends FFF("XXX1")
   case object FFF2 extends FFF("XXX2")
 
   case object XXX extends CY("XXX") //Denote a "transaction" involving no currency.
-  case object XTS extends CY("XTS") //Cryptocurrency Bitcoin but is not ISO 4217 approved
+  case object XTS extends CY("XTS") //Reserved for use in testing.
   //case object XBT extends CY("XBT") //Cryptocurrency Bitcoin but is not ISO 4217 approved
   case object XAU extends CY("XAU") //GOLD
 

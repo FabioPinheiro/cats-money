@@ -1,19 +1,13 @@
 package app.fmgp.money
 
-import cats.kernel.{CommutativeGroup, Eq, Monoid, Order}
+import cats.kernel.{Eq, Monoid, Order}
 
-sealed abstract case class MoneyY[T <: CurrencyY.CY](amount: BigDecimal) {
-  def currency: T
-}
+sealed abstract case class MoneyY[T <: CurrencyY.CY](amount: BigDecimal, currency: T)
 
 object MoneyY {
-  def apply[T <: CurrencyY.CY](amount: BigDecimal, t: T): MoneyY[T] = new MoneyY[T](amount) { //TODO need to round
-    override def currency: T = t
-  }
+  def apply[T <: CurrencyY.CY](amount: BigDecimal, t: T): MoneyY[T] = new MoneyY[T](amount, t) {} //TODO need to round
   def fromTuple[T <: CurrencyY.CY](m: (T, BigDecimal)): MoneyY[T] = MoneyY.apply(m._2, m._1)
-  def zero[T <: CurrencyY.CY](t: T): MoneyY[T] = new MoneyY[T](BigDecimal(0)) {
-    override def currency: T = t
-  }
+  //def zero[T <: CurrencyY.CY](t: T): MoneyY[T] = new MoneyY[T](BigDecimal(0), t) {}
   implicit def eqv[T <: CurrencyY.CY]: Eq[MoneyY[T]] = Eq.fromUniversalEquals
 }
 
@@ -25,6 +19,7 @@ object MoneyYMonoid {
   implicit val MoneyOrder: Order[MoneyY[_]] = Order.by(_.amount)
 
   import scala.language.implicitConversions
+
   implicit def fMoneyYMonoid[C <: CurrencyY.CY](c: C): Monoid[MoneyY[C]] = new Monoid[MoneyY[C]] {
     override def combine(x: MoneyY[C], y: MoneyY[C]): MoneyY[C] = MoneyY(x.amount |+| y.amount, x.currency)
     override def empty: MoneyY[C] = MoneyY[C](0, c)
