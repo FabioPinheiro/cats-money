@@ -16,6 +16,7 @@ scalacOptions ++= Seq(
 
 libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core" % "1.5.0",
+  "com.chuusai" %% "shapeless" % "2.3.3",
   "org.typelevel" %% "cats-laws" % "1.5.0" % Test, //or `cats-testkit` if you are using ScalaTest
   "org.typelevel" %% "cats-testkit" % "1.5.0" % Test,
   "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % "1.2.0" % Test,

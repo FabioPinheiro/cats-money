@@ -36,10 +36,18 @@ object Main extends App {
   val w2: Wallet[CurrencyY] = Wallet.Y.fromMoney(x0) |+| Wallet.Y.fromMoney(x1) |+| Wallet.Y.fromMoney(x2) //|+| Wallet.Y.fromMoney(c)
   println(w2, rate1.convert(w2)) //FIXME
 
-  //TODO:
-  //- implemente the rates convertion
 
-  //- support minor currencies
+  import shapeless._, record._, union._, syntax.singleton._
+  type U = Union.`'a -> EUR, 'b -> USD`.T
+  val u1 = Coproduct[U]('a ->> EUR)
+  object polymorphicF extends Poly1 {
+    implicit def caseEUR = at[EUR.type](i => "sEUR")
+    implicit def caseSUSD = at[USD.type](s => "sUSD")
+  }
+  println("u1", u1)
+  type CU = EUR.type :+: USD.type :+: CNil
+  val cu = Coproduct[CU](USD)
+  println("cu", cu, cu map polymorphicF)
 }
 
 
