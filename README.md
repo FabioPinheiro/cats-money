@@ -64,8 +64,11 @@ The current maintainers (people who can merge pull requests) are:
       println("cu", cu, cu map polymorphicF)
       ```
     * make a Rate a Monoid for subsets
-  * testing for non-compilation of type unsafe
-    * [shapeless.test.illTyped][shapeless]
+  * *TESTS:*
+    * FIX: MoneyTree.monad.tailRecM stack safety *** FAILED *** */
+      * just need to store the structure when doing the loop (see code)
+    * testing for non-compilation of type unsafe
+      * [shapeless.test.illTyped][shapeless]
 
 ### Copyright and License
 

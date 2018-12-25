@@ -1,9 +1,7 @@
 package app.fmgp.money
 
-
-import app.fmgp.sandbox.MoneyTestUtils
 import cats.kernel.laws.discipline._
-import cats.laws.discipline.FunctorTests
+import cats.laws.discipline.{FunctorTests, MonadTests}
 import cats.tests.CatsSuite
 
 /** testOnly app.fmgp.money.MoneyYLawTests */
@@ -30,5 +28,5 @@ class MoneyYLawTests extends CatsSuite with MoneyTestUtils {
   //checkAll("MoneyYMap", CommutativeSemigroupTests[MoneyYMap[CY]].commutativeSemigroup)
 
   checkAll("MoneyTree", FunctorTests[MoneyTree].functor[MoneyY[CY], MoneyY[EUR.type], MoneyY[XXX.type]])
-
+  checkAll("MoneyTree", MonadTests[MoneyTree].monad[MoneyY[CY], MoneyY[EUR.type], MoneyY[XXX.type]])
 }

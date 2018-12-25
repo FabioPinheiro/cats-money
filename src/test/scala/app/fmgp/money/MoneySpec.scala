@@ -74,6 +74,8 @@ class MoneySpec extends Specification {
 
       val t2afterConverted: MoneyTree[MoneyY[CurrencyY.EUR.type]] = treeFunctor.map(t2)(e => c1.convert(e))
       val t3afterConverted: MoneyTree[MoneyY[CurrencyY.EUR.type]] = treeFunctor.map(t3)(e => c2.convert(e))
+      val t2afterConverted2: MoneyTree[MoneyY[CurrencyY.EUR.type]] = treeMonad.map(t2)(e => c1.convert(e))
+      val t3afterConverted2: MoneyTree[MoneyY[CurrencyY.EUR.type]] = treeMonad.map(t3)(e => c2.convert(e))
       /* TODO on the console //WTF BUG (on output on the test)?? try but change c2 to c1 and run this test
       > treeFunctor.map(t3)(e => c1.convert(e))
         scala.MatchError: MoneyY(1,GBP) (of class app.fmgp.money.MoneyY$$anon$1)
@@ -94,13 +96,18 @@ class MoneySpec extends Specification {
       }
       "after convert must have the some number of elements bur only one currency " >> {
         t2afterConverted.collectValues.map(_.currency) map (e => e must be_===(EUR)) must haveSize(5)
+        t2afterConverted2.collectValues.map(_.currency) map (e => e must be_===(EUR)) must haveSize(5)
         t3afterConverted.collectValues.map(_.currency) map (e => e must be_===(EUR)) must haveSize(6)
+        t3afterConverted2.collectValues.map(_.currency) map (e => e must be_===(EUR)) must haveSize(6)
       }
       "convert with the right rates" >> {
         t2afterConverted.collectValues.map(_.amount.toDouble) must contain(1.5d, 10d, 150d, 1000d, 15000d)
+        t2afterConverted2.collectValues.map(_.amount.toDouble) must contain(1.5d, 10d, 150d, 1000d, 15000d)
         t3afterConverted.collectValues.map(_.amount.toDouble) must contain(1.5d, 10d, 150d, 1000d, 15000d, 0.8)
+        t3afterConverted2.collectValues.map(_.amount.toDouble) must contain(1.5d, 10d, 150d, 1000d, 15000d, 0.8)
       }
       "throw an MatchError because of missing Match" >> {
+        treeMonad.map(t4)(e => c2.convert(e)) must throwAn[scala.MatchError]
         treeFunctor.map(t4)(e => c2.convert(e)) must throwAn[scala.MatchError]
       }
     }
