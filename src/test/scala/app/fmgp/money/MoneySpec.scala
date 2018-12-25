@@ -1,7 +1,6 @@
 package app.fmgp.money
 
 import app.fmgp.money.CurrencyY._
-import org.specs2.matcher.ContainWithResult
 import org.specs2.mutable._
 
 /** testOnly app.fmgp.money.MoneySpec */
@@ -72,8 +71,6 @@ class MoneySpec extends Specification {
       val c2 = UnsafeRateConverter.fromMapRates(EUR, Map(USD -> 1.5, GBP -> 0.8))
 
       import app.fmgp.money.MoneyTree._
-      import app.fmgp.money.MoneyY._
-      import app.fmgp.money.MoneyYMonoid._
 
       val t2afterConverted: MoneyTree[MoneyY[CurrencyY.EUR.type]] = treeFunctor.map(t2)(e => c1.convert(e))
       val t3afterConverted: MoneyTree[MoneyY[CurrencyY.EUR.type]] = treeFunctor.map(t3)(e => c2.convert(e))

@@ -1,4 +1,6 @@
-package app.fmgp.money
+package app.fmgp.sandbox
+
+import app.fmgp.money.{CurrencyY, MoneyTree, MoneyY}
 
 
 case class Rate[F <: CurrencyY.CurrencyY, T <: CurrencyY.CurrencyY](from: F, to: T, rate: BigDecimal) {

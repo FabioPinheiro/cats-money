@@ -1,8 +1,9 @@
-package app.fmgp.money
+package app.fmgp.sandbox
 
-import app.fmgp.money.Currency.CurrencyX
+
+import app.fmgp.sandbox.CurrencyX.CurrencyX
 import cats.implicits._
-import cats.kernel.{CommutativeGroup, Eq, Monoid}
+import cats.kernel.{Eq, Monoid}
 
 
 sealed abstract case class MoneyX[T <: Enumeration#Value](amount: BigDecimal) {
@@ -28,6 +29,6 @@ object MoneyXMonoid {
   //  }
   implicit val fMoneyXMonoid: Monoid[MoneyX[CurrencyX]] = new Monoid[MoneyX[CurrencyX]] { //THIS CAN NOT ME A MONOID!
     override def combine(x: MoneyX[CurrencyX], y: MoneyX[CurrencyX]): MoneyX[CurrencyX] = MoneyX(x.amount |+| y.amount, x.currency) //FIXME x.currency
-    override def empty: MoneyX[CurrencyX] = MoneyX.zero(Currency.XXX)
+  override def empty: MoneyX[CurrencyX] = MoneyX.zero(CurrencyX.XXX)
   }
 }

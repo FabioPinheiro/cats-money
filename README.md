@@ -41,7 +41,9 @@ The current maintainers (people who can merge pull requests) are:
   * rename and structure
     * Make most thing a trait and combine them on the package level
     * draw a UML
-  * support minor currencies
+  * currency
+    * support minor currencies
+    * add all currencies from ISO-4217
   * create subset type of currencies
     * try [shapeless][shapeless] Union type
       ```

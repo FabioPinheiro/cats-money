@@ -1,10 +1,8 @@
 package app.fmgp.sandbox
 
-//import cats.Order
-import cats.kernel._
-import cats.syntax._
 import cats.implicits._
 import cats.instances.bigDecimal.catsKernelStdGroupForBigDecimal
+import cats.kernel._
 
 
 sealed trait CC {
@@ -39,7 +37,7 @@ case class Money2EUR(amount2: BigDecimal) extends Money2B[CCEUR.type] {
 case class Money2Map(w: Map[CC, BigDecimal])
 object Money2Map {
   //implicit val eq: Eq[Money2Map] = Eq.fromUniversalEquals //DON"T WORK!
-  implicit val eqv: Eq[Money2Map] = Eq.instance((a,b) =>
+  implicit val eqv: Eq[Money2Map] = Eq.instance((a, b) =>
     a.w.filterNot(_._2 == catsKernelStdGroupForBigDecimal.empty) == b.w.filterNot(_._2 == catsKernelStdGroupForBigDecimal.empty)
   )
 }
@@ -55,12 +53,13 @@ object Money2Monoid {
 }
 
 
-
 object Money2Group {
   implicit val group: Group[Money2Map] = new Group[Money2Map] {
     override def combine(x: Money2Map, y: Money2Map): Money2Map = Money2Map(x.w |+| y.w)
     override def empty: Money2Map = Money2Map(Map.empty)
+
     import cats.instances.bigDecimal.catsKernelStdGroupForBigDecimal
+
     override def inverse(a: Money2Map): Money2Map = Money2Map(a.w.mapValues(e => catsKernelStdGroupForBigDecimal.inverse(e)))
     override def remove(a: Money2Map, b: Money2Map): Money2Map = super.remove(a, b)
   }

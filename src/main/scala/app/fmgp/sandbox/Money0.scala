@@ -1,11 +1,10 @@
 package app.fmgp.sandbox
 
-import app.fmgp.money.Currency
 import cats.Order
-import cats.kernel.CommutativeSemigroup
 import cats.instances.bigDecimal.catsKernelStdOrderForBigDecimal
+import cats.kernel.CommutativeSemigroup
 
-case class Money0(amount: BigDecimal, currency: Currency.Value) {
+case class Money0(amount: BigDecimal, currency: CurrencyX.Value) {
   //def unary_- : Money0 = this.copy(amount = -amount)
   //def +(that: Money0): Money0
   def +(that: Money0): Money0 = {

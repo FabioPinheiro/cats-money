@@ -1,8 +1,7 @@
 package app.fmgp.sandbox
 
 
-import app.fmgp.money.Currency
-import cats.kernel.laws.discipline.{CommutativeGroupTests, CommutativeSemigroupTests, EqTests, GroupTests, SemigroupTests}
+import cats.kernel.laws.discipline.{CommutativeGroupTests, CommutativeSemigroupTests, GroupTests, SemigroupTests}
 import cats.tests.CatsSuite
 import org.scalacheck.{Arbitrary, Cogen, Gen}
 
@@ -11,7 +10,7 @@ class Money0LawTests extends CatsSuite {
     for {
       amount <- Gen.chooseNum(0d, 1000d).map(BigDecimal.apply)
       //FIXME => FAILED TEST! //currency <- Gen.oneOf(Currency.EUR, Currency.USD)
-    } yield Money0(amount, Currency.USD)
+    } yield Money0(amount, CurrencyX.USD)
   }
   checkAll("Money0", CommutativeSemigroupTests[Money0].commutativeSemigroup)
 }
@@ -21,7 +20,7 @@ trait Money1TestAux {
   implicit val arbitraryMoney1: Arbitrary[Money1] = Arbitrary {
     for {
       amount <- Gen.chooseNum(0d, 1000d).map(BigDecimal.apply)
-      currency <- Gen.oneOf(Currency.EUR, Currency.USD)
+      currency <- Gen.oneOf(CurrencyX.EUR, CurrencyX.USD)
     } yield Money1(amount, currency)
   }
   implicit val cogen: Cogen[Money1] = Cogen[String].contramap(e => s"${e.amount}-${e.currency}")
@@ -72,12 +71,15 @@ trait Money2TestAux {
 class Money2SGLawTests extends CatsSuite with Money2TestAux {
   //FIXME checkAll(s"Money2", EqTests[Money2Map].eqv)
   import Money2Monoid._
+
   checkAll(s"Money2", SemigroupTests[Money2Map].semigroup)
 }
 
 
 class Money2GroupLawTests extends CatsSuite with Money2TestAux {
+
   import Money2Group._
+
   checkAll(s"Money2", GroupTests[Money2Map].group)
 }
 
@@ -98,7 +100,7 @@ trait Money3TestAux {
 
   implicit val arbitraryMoney2Map: Arbitrary[Money3Map] = Arbitrary {
     for {
-      x <- Gen.oneOf(arbitraryMoney2USD.arbitrary,arbitraryMoney2EUR.arbitrary)
+      x <- Gen.oneOf(arbitraryMoney2USD.arbitrary, arbitraryMoney2EUR.arbitrary)
     } yield Money3Map(Map(x.currency -> x.amount))
   }
   implicit val cogen: Cogen[Money3Map] = Cogen[String].contramap(_.w.toString)
@@ -106,7 +108,9 @@ trait Money3TestAux {
 
 
 class Money3GroupLawTests extends CatsSuite with Money3TestAux {
+
   import Money3CommutativeGroup._
+
   checkAll(s"Money3", CommutativeGroupTests[Money3Map].commutativeGroup)
 }
 

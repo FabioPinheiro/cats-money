@@ -3,21 +3,6 @@ package app.fmgp.money
 import cats.kernel.Eq
 
 /** TODO ISO-4217 */
-object Currency extends Enumeration {
-  implicit val eqv: Eq[CurrencyX] = Eq.fromUniversalEquals
-
-  type CurrencyX = Value
-
-  val XXX = Value("XXX") //Denote a "transaction" involving no currency.
-  val XTS = Value("XTS") //Reserved for use in testing.
-  //val XBT = Value("XBT") //Cryptocurrency Bitcoin but is not ISO 4217 approved
-  val XAU = Value("XAU") //GOLD
-  val EUR = Value("EUR")
-  val GBP = Value("GBP")
-  val USD = Value("USD")
-}
-
-
 object CurrencyY {
   implicit val eqv: Eq[CY] = Eq.fromUniversalEquals
 

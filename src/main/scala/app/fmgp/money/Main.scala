@@ -1,5 +1,7 @@
 package app.fmgp.money
 
+import app.fmgp.sandbox.{Rate, Wallet}
+
 //def f[T](t:T)(implicit tag: scala.reflect.ClassTag[T])= tag
 //def f[T](t:T)(implicit tag: scala.reflect.runtime.universe.TypeTag[T])= tag
 
@@ -10,13 +12,13 @@ object Main extends App {
   import cats.syntax.eq._ // for ===
 
   import app.fmgp.money._ //TEST CONSOLE
-  import app.fmgp.money.MoneyX._
-  import app.fmgp.money.MoneyXMonoid._
+  import app.fmgp.sandbox.MoneyX._
+  import app.fmgp.sandbox.MoneyXMonoid._
   import app.fmgp.money.MoneyY._
   import app.fmgp.money.MoneyYMonoid._
-  import app.fmgp.money.Wallet._
-  import app.fmgp.money.Wallet.X._
-  import app.fmgp.money.Wallet.Y._
+  import app.fmgp.sandbox.Wallet._
+  import app.fmgp.sandbox.Wallet.X._
+  import app.fmgp.sandbox.Wallet.Y._
 
   import app.fmgp.money.CurrencyY._
 
@@ -32,12 +34,13 @@ object Main extends App {
   val x0 = MoneyY(100, FFF)
   val x1 = MoneyY(1, FFF1)
   val x2 = MoneyY(10, FFF2)
-  val rate1 = Rate(FFF,EUR,1.5)
+  val rate1 = Rate(FFF, EUR, 1.5)
   val w2: Wallet[CurrencyY] = Wallet.Y.fromMoney(x0) |+| Wallet.Y.fromMoney(x1) |+| Wallet.Y.fromMoney(x2) //|+| Wallet.Y.fromMoney(c)
   println(w2, rate1.convert(w2)) //FIXME
 
 
   import shapeless._, record._, union._, syntax.singleton._
+
   type U = Union.`'a -> EUR, 'b -> USD`.T
   val u1 = Coproduct[U]('a ->> EUR)
   object polymorphicF extends Poly1 {
@@ -49,7 +52,6 @@ object Main extends App {
   val cu = Coproduct[CU](USD)
   println("cu", cu, cu map polymorphicF)
 }
-
 
 
 //import app.fmgp.money.Currency._

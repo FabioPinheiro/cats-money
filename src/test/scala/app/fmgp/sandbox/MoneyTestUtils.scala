@@ -1,11 +1,9 @@
-package app.fmgp.money
+package app.fmgp.sandbox
 
-import app.fmgp.money.CurrencyY._
-import app.fmgp.money.MoneyX._
+import app.fmgp.money.CurrencyY.{CY, CYValues, CurrencyY, EUR, USD, XXX}
 import app.fmgp.money.MoneyYMonoid.fMoneyYMonoid
-import app.fmgp.money.Wallet.X._
+import app.fmgp.money.{CurrencyY, MoneyTree, MoneyY}
 import org.scalacheck.{Arbitrary, Cogen, Gen}
-
 
 trait MoneyTestUtils {
 
