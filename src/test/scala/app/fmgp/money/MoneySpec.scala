@@ -4,6 +4,7 @@ import app.fmgp.money.CurrencyY._
 import org.specs2.matcher.ContainWithResult
 import org.specs2.mutable._
 
+/** testOnly app.fmgp.money.MoneySpec */
 class MoneySpec extends Specification {
   "This is the Money Specification".br
   "MoneySpec" >> {
@@ -36,7 +37,9 @@ class MoneySpec extends Specification {
           case MoneyZBranch(v) => v post "the number of values inside the tree" must haveSize(3)
         })
       }
-      "collectValues" >> {tInts3.collectValues must contain(5,2,3,4,1)}
+      "collectValues" >> {
+        tInts3.collectValues must contain(5, 2, 3, 4, 1)
+      }
       "collapse" >> {
         tInts3.collapse must beLike {
           case MoneyZBranch(v) => v must {
@@ -47,7 +50,61 @@ class MoneySpec extends Specification {
       }
       "simplify" >> {
         import cats.instances.int.catsKernelStdGroupForInt
-        tInts3.simplify.collectValues must contain(5+4+3+2+1)
+        tInts3.simplify.collectValues must contain(5 + 4 + 3 + 2 + 1)
+      }
+    }
+  }
+  "Collector" >> {
+    "Unsafe collector" >> {
+      val m1 = MoneyTree.leaf(MoneyY(1, USD))
+      val m2 = MoneyTree.leaf(MoneyY(10, EUR))
+      val m3 = MoneyTree.leaf(MoneyY(100, USD))
+      val m4 = MoneyTree.leaf(MoneyY(1000, EUR))
+      val m5 = MoneyTree.leaf(MoneyY(10000, USD))
+      val m6 = MoneyTree.leaf(MoneyY(1, GBP))
+      val m7 = MoneyTree.leaf(MoneyY(1, XXX))
+
+      val t1 = MoneyTree.join(m1, m2, m3)
+      val t2 = MoneyTree.join(m1, m2, MoneyTree.join(m3), MoneyTree.join(m4, m5))
+      val t3 = MoneyTree.join(m1, m2, MoneyTree.join(m3, m6), MoneyTree.join(m4, m5))
+      val t4 = MoneyTree.join(m1, m2, MoneyTree.join(m3, m6, m7), MoneyTree.join(m4, m5))
+      val c1 = UnsafeRateConverter.fromMapRates(EUR, Map(USD -> 1.5))
+      val c2 = UnsafeRateConverter.fromMapRates(EUR, Map(USD -> 1.5, GBP -> 0.8))
+
+      import app.fmgp.money.MoneyTree._
+      import app.fmgp.money.MoneyY._
+      import app.fmgp.money.MoneyYMonoid._
+
+      val t2afterConverted: MoneyTree[MoneyY[CurrencyY.EUR.type]] = treeFunctor.map(t2)(e => c1.convert(e))
+      val t3afterConverted: MoneyTree[MoneyY[CurrencyY.EUR.type]] = treeFunctor.map(t3)(e => c2.convert(e))
+      /* TODO on the console //WTF BUG (on output on the test)?? try but change c2 to c1 and run this test
+      > treeFunctor.map(t3)(e => c1.convert(e))
+        scala.MatchError: MoneyY(1,GBP) (of class app.fmgp.money.MoneyY$$anon$1)
+          at scala.PartialFunction$$anon$1.apply(PartialFunction.scala:259)
+          at scala.PartialFunction$$anon$1.apply(PartialFunction.scala:257)
+          at app.fmgp.money.UnsafeRateConverter$$anonfun$1.applyOrElse(Converter.scala:15)
+          at app.fmgp.money.UnsafeRateConverter$$anonfun$1.applyOrElse(Converter.scala:15)
+          at scala.runtime.AbstractPartialFunction.apply(AbstractPartialFunction.scala:38)
+          at app.fmgp.money.UnsafeRateConverter$$anonfun$2.applyOrElse(Converter.scala:21)
+          at app.fmgp.money.UnsafeRateConverter$$anonfun$2.applyOrElse(Converter.scala:21)
+          at scala.PartialFunction$OrElse.apply(PartialFunction.scala:172)
+          at app.fmgp.money.UnsafeRateConverter.convert(Converter.scala:7)
+          at .$anonfun$res1$1(<console>:33)
+          ...
+       */
+      "convert a single element" >> {
+        c1.convert(MoneyY(1, EUR)) must be_===(MoneyY(1, EUR))
+      }
+      "after convert must have the some number of elements bur only one currency " >> {
+        t2afterConverted.collectValues.map(_.currency) map (e => e must be_===(EUR)) must haveSize(5)
+        t3afterConverted.collectValues.map(_.currency) map (e => e must be_===(EUR)) must haveSize(6)
+      }
+      "convert with the right rates" >> {
+        t2afterConverted.collectValues.map(_.amount.toDouble) must contain(1.5d, 10d, 150d, 1000d, 15000d)
+        t3afterConverted.collectValues.map(_.amount.toDouble) must contain(1.5d, 10d, 150d, 1000d, 15000d, 0.8)
+      }
+      "throw an MatchError because of missing Match" >> {
+        treeFunctor.map(t4)(e => c2.convert(e)) must throwAn[scala.MatchError]
       }
     }
   }

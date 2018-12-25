@@ -38,6 +38,9 @@ The current maintainers (people who can merge pull requests) are:
 
 #### TODO LIST
   * implement the rates conversion
+  * rename and structure
+    * Make most thing a trait and combine them on the package level
+    * draw a UML
   * support minor currencies
   * create subset type of currencies
     * try [shapeless][shapeless] Union type

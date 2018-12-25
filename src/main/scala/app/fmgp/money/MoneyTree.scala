@@ -26,11 +26,6 @@ final case class MoneyZLeaf[A](value: A) extends MoneyTree[A] {
   override def collectValues: Seq[A] = Seq(value)
   override def collapse: MoneyZLeaf[A] = this
 }
-//{
-//  def collapseAndGroup: MoneyTree[A] = {
-//    MoneyTree.treeFunctor.map(this)(e => e )
-//  }
-//}
 
 
 object MoneyTree {
@@ -43,12 +38,11 @@ object MoneyTree {
   import cats.Functor
 
   implicit def eqTree[A: Eq]: Eq[MoneyTree[A]] = Eq.fromUniversalEquals
-  implicit val treeFunctor: Functor[MoneyTree] =
-    new Functor[MoneyTree] {
-      def map[A, B](tree: MoneyTree[A])(func: A => B): MoneyTree[B] =
-        tree match {
-          case MoneyZBranch(value) => MoneyZBranch(value.map(e => map(e)(func)))
-          case MoneyZLeaf(value) => MoneyZLeaf[B](func(value))
-        }
-    }
+  implicit val treeFunctor: Functor[MoneyTree] = new Functor[MoneyTree] {
+    def map[A, B](tree: MoneyTree[A])(func: A => B): MoneyTree[B] =
+      tree match {
+        case MoneyZBranch(value) => MoneyZBranch(value.map(e => map(e)(func)))
+        case MoneyZLeaf(value) => MoneyZLeaf[B](func(value))
+      }
+  }
 }

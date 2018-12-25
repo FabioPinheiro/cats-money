@@ -5,8 +5,6 @@ case class Rate[F <: CurrencyY.CurrencyY, T <: CurrencyY.CurrencyY](from: F, to:
 
   def convert(money: MoneyY[F]): MoneyY[T] = MoneyY[T](money.amount * rate, to)
 
-  def convert2(money: MoneyY[F]): MoneyY[T] = MoneyY[T](money.amount * rate, to)
-
   def convert(wallet: Wallet[CurrencyY.CurrencyY]): Wallet[CurrencyY.CurrencyY] = {
     import cats.implicits._
     import cats.kernel.Monoid
@@ -18,9 +16,8 @@ case class Rate[F <: CurrencyY.CurrencyY, T <: CurrencyY.CurrencyY](from: F, to:
 
   def convert(tree: MoneyTree[MoneyY[CurrencyY.CurrencyY]]): MoneyTree[MoneyY[CurrencyY.CurrencyY]] = {
     import app.fmgp.money.MoneyTree.treeFunctor
-    val FROM: F = from
     treeFunctor.map(tree) {
-      case m@MoneyY(amount, FROM) => MoneyY(amount * rate, to)
+      case MoneyY(amount, `from`) => MoneyY(amount * rate, to)
       case m => m
     }
   }

@@ -14,6 +14,8 @@ scalacOptions ++= Seq(
   "-Ypartial-unification" // allow the compiler to unify type constructors of different arities
 )
 
+//scalacOptions in Test ++= Seq("-Yrangepos")
+
 libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core" % "1.5.0",
   "com.chuusai" %% "shapeless" % "2.3.3",
