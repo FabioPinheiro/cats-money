@@ -8,7 +8,7 @@ class MoneySpec extends Specification {
   "This is the Money Specification".br
   "MoneySpec" >> {
     "create Money" >> {
-      val a: MoneyY[CurrencyY.CurrencyY] = MoneyY(404, USD)
+      val a: MoneyY[CurrencyY.CY] = MoneyY(404, USD)
       val b = MoneyY(20, USD)
       val c = MoneyY(9001, EUR)
       "with currency" >> {
@@ -67,8 +67,8 @@ class MoneySpec extends Specification {
       val t2 = MoneyTree.join(m1, m2, MoneyTree.join(m3), MoneyTree.join(m4, m5))
       val t3 = MoneyTree.join(m1, m2, MoneyTree.join(m3, m6), MoneyTree.join(m4, m5))
       val t4 = MoneyTree.join(m1, m2, MoneyTree.join(m3, m6, m7), MoneyTree.join(m4, m5))
-      val c1 = UnsafeRateConverter.fromMapRates(EUR, Map(USD -> 1.5))
-      val c2 = UnsafeRateConverter.fromMapRates(EUR, Map(USD -> 1.5, GBP -> 0.8))
+      val c1 = PartialRateConverter.fromMapRates[CY, EUR.type](EUR, Map(USD -> 1.5))
+      val c2 = PartialRateConverter.fromMapRates[CY, EUR.type](EUR, Map(USD -> 1.5, GBP -> 0.8))
 
       import app.fmgp.money.MoneyTree._
 

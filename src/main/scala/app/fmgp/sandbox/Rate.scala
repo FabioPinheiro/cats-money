@@ -3,11 +3,11 @@ package app.fmgp.sandbox
 import app.fmgp.money.{CurrencyY, MoneyTree, MoneyY}
 
 
-case class Rate[F <: CurrencyY.CurrencyY, T <: CurrencyY.CurrencyY](from: F, to: T, rate: BigDecimal) {
+case class Rate[F <: CurrencyY.CY, T <: CurrencyY.CY](from: F, to: T, rate: BigDecimal) {
 
   def convert(money: MoneyY[F]): MoneyY[T] = MoneyY[T](money.amount * rate, to)
 
-  def convert(wallet: Wallet[CurrencyY.CurrencyY]): Wallet[CurrencyY.CurrencyY] = {
+  def convert(wallet: Wallet[CurrencyY.CY]): Wallet[CurrencyY.CY] = {
     import cats.implicits._
     import cats.kernel.Monoid
     implicit val monoidOfT: Monoid[MoneyY[T]] = app.fmgp.money.MoneyYMonoid.fMoneyYMonoid(to)
@@ -16,7 +16,7 @@ case class Rate[F <: CurrencyY.CurrencyY, T <: CurrencyY.CurrencyY](from: F, to:
     (a |+| b).map(e => wallet.update(e.currency, e.amount)).getOrElse(wallet)
   }
 
-  def convert(tree: MoneyTree[MoneyY[CurrencyY.CurrencyY]]): MoneyTree[MoneyY[CurrencyY.CurrencyY]] = {
+  def convert(tree: MoneyTree[MoneyY[CurrencyY.CY]]): MoneyTree[MoneyY[CurrencyY.CY]] = {
     import app.fmgp.money.MoneyTree.treeFunctor
     treeFunctor.map(tree) {
       case MoneyY(amount, `from`) => MoneyY(amount * rate, to)

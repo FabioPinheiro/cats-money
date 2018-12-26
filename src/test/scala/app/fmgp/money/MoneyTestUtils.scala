@@ -8,7 +8,7 @@ trait MoneyTestUtils {
 
   implicit val moneyMonoidXXX = fMoneyYMonoid(XXX)
 
-  implicit def arbitraryCurrency: Arbitrary[CY] = Arbitrary(Gen.oneOf(CYValues))
+  implicit def arbitraryCurrency: Arbitrary[CY] = Arbitrary(Gen.oneOf(Seq(USD, GBP, EUR)))
   implicit val cogenCurrencyX: Cogen[CY] = Cogen[String].contramap(_.toString)
   implicit def cogenMoneyY: Cogen[MoneyY[CY]] = Cogen[String].contramap(_.toString)
   implicit def cogenMoneyTree: Cogen[MoneyTree[MoneyY[CY]]] = Cogen[String].contramap(_.toString)
@@ -19,7 +19,7 @@ trait MoneyTestUtils {
     currency <- arbitraryCurrency.arbitrary
   } yield MoneyY[CY](amount, currency))
 
-  def fArbitraryMoney[C <: CurrencyY](c: C): Arbitrary[MoneyY[C]] = Arbitrary(for {
+  def fArbitraryMoney[C <: CY](c: C): Arbitrary[MoneyY[C]] = Arbitrary(for {
     amount <- Gen.chooseNum(-100d, 1000, 0, 1).map(BigDecimal.apply)
   } yield MoneyY[C](amount, c))
 
@@ -47,8 +47,8 @@ trait MoneyTestUtils {
 
 
   //FIXME need
-  def cToEUR = UnsafeRateConverter.fromMapRates(EUR, Map(USD->1.2, GBP->0.9))
-  def cToXXX = UnsafeRateConverter.fromMapRates(XXX, Map(EUR->1.2))
+  def cToEUR = PartialRateConverter.fromMapRates[CY,EUR.type](EUR, Map(USD->1.2, GBP->0.9))
+  def cToXXX = PartialRateConverter.fromMapRates[CY,XXX.type](XXX, Map(EUR->1.2))
 
 
 

@@ -1,6 +1,6 @@
 package app.fmgp.money
 
-import app.fmgp.money.CurrencyY.CurrencyY
+import app.fmgp.money.CurrencyY.CY
 import cats.{Functor, Monad}
 import cats.syntax.monoid._
 import cats.instances.bigDecimal._
