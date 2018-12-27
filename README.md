@@ -38,32 +38,28 @@ The current maintainers (people who can merge pull requests) are:
 
 #### TODO LIST
   * implement the rates conversion
-  * rename and structure
-    * Make most thing a trait and combine them on the package level
-    * draw a UML
+  * rename classes and draw a UML
   * currency
-    * support minor currencies
     * add all currencies from ISO-4217
-  * create subset type of currencies
-    * try [shapeless][shapeless] Union type
-      ```
-      type U = Union.`'a -> EUR, 'b -> USD`.T
-      val u1 = Coproduct[U]('a ->> EUR)
-      println("u1", u1)
-      ```
-    * try [Dotty Union Types](https://dotty.epfl.ch/docs/reference/union-types.html) =)
-  * implement the rates conversion on a subset of currencies
-    * try [shapeless][shapeless] polymorphic function
-      ```
-      object polymorphicF extends Poly1 {
-        implicit def caseEUR = at[EUR.type](i => "sEUR")
-        implicit def caseSUSD = at[USD.type](s => "sUSD")
-      }
-      type CU = EUR.type :+: USD.type :+: CNil
-      val cu = Coproduct[CU](USD)
-      println("cu", cu, cu map polymorphicF)
-      ```
-    * make a Rate a Monoid for subsets
+    * create subset type of currencies
+      * try [shapeless][shapeless] Union type
+        ```
+        type U = Union.`'a -> EUR, 'b -> USD`.T
+        val u1 = Coproduct[U]('a ->> EUR)
+        println("u1", u1)
+        ```
+      * try [Dotty Union Types](https://dotty.epfl.ch/docs/reference/union-types.html) =)
+    * implement the rates conversion on a subset of currencies
+      * try [shapeless][shapeless] polymorphic function
+        ```
+        object polymorphicF extends Poly1 {
+          implicit def caseEUR = at[EUR.type](i => "sEUR")
+          implicit def caseSUSD = at[USD.type](s => "sUSD")
+        }
+        type CU = EUR.type :+: USD.type :+: CNil
+        val cu = Coproduct[CU](USD)
+        println("cu", cu, cu map polymorphicF)
+        ```
   * *TESTS:*
     * FIX: MoneyTree.monad.tailRecM stack safety *** FAILED *** */
       * just need to store the structure when doing the loop (see code)

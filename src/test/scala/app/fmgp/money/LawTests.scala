@@ -1,5 +1,8 @@
 package app.fmgp.money
 
+import app.fmgp.money.CurrencyY._
+import app.fmgp.money.MoneyTree._
+import app.fmgp.money.instances.all._
 import cats.kernel.laws.discipline._
 import cats.laws.discipline.{FunctorTests, MonadTests}
 import cats.tests.CatsSuite
@@ -7,9 +10,7 @@ import cats.tests.CatsSuite
 /** testOnly app.fmgp.money.MoneyYLawTests */
 class MoneyYLawTests extends CatsSuite with MoneyTestUtils {
 
-  import app.fmgp.money.CurrencyY._
-  import app.fmgp.money.MoneyTree._
-  import app.fmgp.money.MoneyY._
+
 
   //import Currency.eqv
   //  import MoneyYMapCommutativeGroup._

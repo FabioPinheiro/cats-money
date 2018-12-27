@@ -1,7 +1,9 @@
 package app.fmgp.money
 
+import app.fmgp.money.instances.all._
 import app.fmgp.money.CurrencyY._
 import org.specs2.mutable._
+
 
 /** testOnly app.fmgp.money.MoneySpec */
 class MoneySpec extends Specification {
@@ -60,8 +62,8 @@ class MoneySpec extends Specification {
       val m3 = MoneyTree.leaf(MoneyY(100, USD))
       val m4 = MoneyTree.leaf(MoneyY(1000, EUR))
       val m5 = MoneyTree.leaf(MoneyY(10000, USD))
-      val m6 = MoneyTree.leaf(MoneyY(1, GBP))
-      val m7 = MoneyTree.leaf(MoneyY(1, XXX))
+      val m6 = MoneyTree.leaf(MoneyY(2, GBP))
+      val m7 = MoneyTree.leaf(MoneyY(4, XXX))
 
       val t1 = MoneyTree.join(m1, m2, m3)
       val t2 = MoneyTree.join(m1, m2, MoneyTree.join(m3), MoneyTree.join(m4, m5))
@@ -70,12 +72,10 @@ class MoneySpec extends Specification {
       val c1 = PartialRateConverter.fromMapRates[CY, EUR.type](EUR, Map(USD -> 1.5))
       val c2 = PartialRateConverter.fromMapRates[CY, EUR.type](EUR, Map(USD -> 1.5, GBP -> 0.8))
 
-      import app.fmgp.money.MoneyTree._
-
-      val t2afterConverted: MoneyTree[MoneyY[CurrencyY.EUR.type]] = treeFunctor.map(t2)(e => c1.convert(e))
-      val t3afterConverted: MoneyTree[MoneyY[CurrencyY.EUR.type]] = treeFunctor.map(t3)(e => c2.convert(e))
-      val t2afterConverted2: MoneyTree[MoneyY[CurrencyY.EUR.type]] = treeMonad.map(t2)(e => c1.convert(e))
-      val t3afterConverted2: MoneyTree[MoneyY[CurrencyY.EUR.type]] = treeMonad.map(t3)(e => c2.convert(e))
+      val t2afterConverted: MoneyTree[MoneyY[CurrencyY.EUR.type]] = MoneyTreeFunctor.map(t2)(e => c1.convert(e))
+      val t3afterConverted: MoneyTree[MoneyY[CurrencyY.EUR.type]] = MoneyTreeFunctor.map(t3)(e => c2.convert(e))
+      val t2afterConverted2: MoneyTree[MoneyY[CurrencyY.EUR.type]] = MoneyTreeMonad.map(t2)(e => c1.convert(e))
+      val t3afterConverted2: MoneyTree[MoneyY[CurrencyY.EUR.type]] = MoneyTreeMonad.map(t3)(e => c2.convert(e))
       /* TODO on the console //WTF BUG (on output on the test)?? try but change c2 to c1 and run this test
       > treeFunctor.map(t3)(e => c1.convert(e))
         scala.MatchError: MoneyY(1,GBP) (of class app.fmgp.money.MoneyY$$anon$1)
@@ -103,12 +103,14 @@ class MoneySpec extends Specification {
       "convert with the right rates" >> {
         t2afterConverted.collectValues.map(_.amount.toDouble) must contain(1.5d, 10d, 150d, 1000d, 15000d)
         t2afterConverted2.collectValues.map(_.amount.toDouble) must contain(1.5d, 10d, 150d, 1000d, 15000d)
-        t3afterConverted.collectValues.map(_.amount.toDouble) must contain(1.5d, 10d, 150d, 1000d, 15000d, 0.8)
-        t3afterConverted2.collectValues.map(_.amount.toDouble) must contain(1.5d, 10d, 150d, 1000d, 15000d, 0.8)
+        t3afterConverted.collectValues.map(_.amount.toDouble) must contain(1.5d, 10d, 150d, 1000d, 15000d, 1.6)
+        t3afterConverted2.collectValues.map(_.amount.toDouble) must contain(1.5d, 10d, 150d, 1000d, 15000d, 1.6)
       }
       "throw an MatchError because of missing Match" >> {
-        treeMonad.map(t4)(e => c2.convert(e)) must throwAn[scala.MatchError]
-        treeFunctor.map(t4)(e => c2.convert(e)) must throwAn[scala.MatchError]
+        println(MoneyTreeMonad.map(t4)(e => c2.isDefinedAt(e)))
+        println( MoneyTreeFunctor.map(t4)(e => c2.isDefinedAt(e)))
+        MoneyTreeMonad.map(t4)(e => c2(e)) must throwAn[scala.MatchError]
+        MoneyTreeFunctor.map(t4)(e => c2(e)) must throwAn[scala.MatchError]
       }
     }
   }

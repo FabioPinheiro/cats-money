@@ -1,12 +1,11 @@
 package app.fmgp.money
 
 import app.fmgp.money.CurrencyY._
-import app.fmgp.money.MoneyYMonoid.fMoneyYMonoid
 import org.scalacheck.{Arbitrary, Cogen, Gen}
 
 trait MoneyTestUtils {
 
-  implicit val moneyMonoidXXX = fMoneyYMonoid(XXX)
+  implicit val moneyMonoidXXX = app.fmgp.money.instances.money.moneyYMonoidT(XXX)
 
   implicit def arbitraryCurrency: Arbitrary[CY] = Arbitrary(Gen.oneOf(Seq(USD, GBP, EUR)))
   implicit val cogenCurrencyX: Cogen[CY] = Cogen[String].contramap(_.toString)

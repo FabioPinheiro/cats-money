@@ -1,27 +1,19 @@
 package app.fmgp.money
 
 import app.fmgp
-import app.fmgp.money
+import app.fmgp.money._
+import app.fmgp.money.instances.all._
 import app.fmgp.sandbox.{Rate, Wallet}
+import cats.syntax.monoid._
+import cats.Eq
+import cats.syntax.eq._ // for ===
 
 //def f[T](t:T)(implicit tag: scala.reflect.ClassTag[T])= tag
 //def f[T](t:T)(implicit tag: scala.reflect.runtime.universe.TypeTag[T])= tag
 
 object Main extends App {
 
-  import cats.syntax.monoid._
-  import cats.Eq
-  import cats.syntax.eq._ // for ===
-
-  import app.fmgp.money._ //TEST CONSOLE
-  import app.fmgp.sandbox.MoneyX._
-  import app.fmgp.sandbox.MoneyXMonoid._
-  import app.fmgp.money.MoneyY._
-  import app.fmgp.money.MoneyYMonoid._
-  import app.fmgp.sandbox.Wallet._
-  import app.fmgp.sandbox.Wallet.X._
   import app.fmgp.sandbox.Wallet.Y._
-
   import app.fmgp.money.CurrencyY._
 
   val a: MoneyY[CurrencyY.CY] = MoneyY(111, USD)
