@@ -14,4 +14,5 @@ package object instances {
   }
 
   object CY extends InstancesForCurrency[app.fmgp.money.CurrencyY.CY]
+  object CTest extends InstancesForCurrency[app.fmgp.money.EUR_XXX.Curency]
 }

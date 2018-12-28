@@ -65,6 +65,9 @@ The current maintainers (people who can merge pull requests) are:
       * just need to store the structure when doing the loop (see code)
     * testing for non-compilation of type unsafe
       * [shapeless.test.illTyped][shapeless]
+  * *DEMO:*
+    * Use the cats's Writer Monad to make log about the conversion
+
 
 ### Copyright and License
 

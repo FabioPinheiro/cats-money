@@ -9,6 +9,7 @@ sealed abstract class MoneyTree[+T] {
   def simplify[S >: T](implicit monoid: Monoid[S]): MoneyTree[S] =
     MoneyTree.joinLeaf[S](monoid.combineAll(this.collectValues:TraversableOnce[T]))
 }
+
 final case class MoneyZBranch[T](value: Seq[MoneyTree[T]]) extends MoneyTree[T] {
   override def collectValues: Seq[T] = value.map(_.collapse).flatMap {
     case MoneyZBranch(v: Seq[MoneyTree[T]]) => v.flatMap(_.collectValues)
@@ -16,11 +17,11 @@ final case class MoneyZBranch[T](value: Seq[MoneyTree[T]]) extends MoneyTree[T] 
   }
   override def collapse: MoneyZBranch[T] = MoneyZBranch[T](value.flatMap(_.collectValues).map(MoneyZLeaf.apply))
 }
+
 final case class MoneyZLeaf[T](value: T) extends MoneyTree[T] {
   override def collectValues: Seq[T] = Seq(value)
   override def collapse: MoneyZLeaf[T] = this
 }
-
 
 object MoneyTree {
   def empty[T]: MoneyTree[T] = MoneyZBranch[T](Seq.empty)

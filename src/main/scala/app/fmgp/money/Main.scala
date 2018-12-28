@@ -35,40 +35,22 @@ object Main extends App {
 
   import shapeless._, record._, union._, syntax.singleton._
 
-  type U = Union.`'a -> EUR, 'b -> USD`.T
-  val u1 = Coproduct[U]('a ->> EUR)
-  println("u1", u1)
 
 
 
+  val UUU = Coproduct[EUR_XXX.Curency]('eur ->> EUR)
+  val converter = ShapelessConverter(1.1,0)
+  println("u1", UUU, converter.poly(XXX))
 
-
-  import shapeless._, record._, union._, syntax.singleton._
-
-  object polymorphicF extends Poly1 {
-    implicit def caseEUR = at[EUR.type](s => 1.4)
-    implicit def caseUSD = at[USD.type](s => "asd")
-    implicit def caseGBP = at[GBP.type](s => 1.1)
-    implicit def caseaGBP = at[CY](s => 0)
-  }
-  type CU = EUR.type :+: USD.type :+: CNil
-  val cu = Coproduct[CU](USD)
-
-  //val bbb: Aux[money.CurrencyY.CY, HNil] = Generic[CY]
-  val aa: Coproduct = cu.map(polymorphicF)
-  val to: CY = EUR
-  val cc = polymorphicF(to)
-  println("cu", cu, cu.map(polymorphicF), polymorphicF(EUR), cc)
-  //println(CU)
+  val LLL = Coproduct[EUR_XXX.CurencyList](XXX)
+  println("cu", LLL, LLL.map(converter.poly), converter.poly(EUR))
 
   object size extends Poly1 {
     implicit def caseInt = at[Int](x => 1)
     implicit def caseString = at[String](_.length)
-    implicit def caseTuple[T, U]
-    (implicit st : Case.Aux[T, Int], su : Case.Aux[U, Int]) =
-      at[(T, U)](t => size(t._1)+size(t._2))
+    implicit def caseTuple[T, U](implicit st: Case.Aux[T, Int], su: Case.Aux[U, Int]) = at[(T, U)](t => size(t._1) + size(t._2))
   }
-  println("size(23)",size(23))
+  println("size(23)", size((230, 123)))
 
 }
 

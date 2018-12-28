@@ -19,14 +19,16 @@ object CurrencyY {
   case object USD extends CY("USD") //
   case object GBP extends CY("GBP") //
   case object EUR extends CY("EUR") //
-  //TODO ... ISO-4217
-
-  //  class FFF(name: String) extends CY(name)
-  //  case object FFF extends FFF("XXX0")
-  //  case object FFF1 extends FFF("XXX1")
-  //  case object FFF2 extends FFF("XXX2")
 }
 
+object EUR_XXX {
+  import shapeless.{:+:, CNil}
+  type CurencyList = CurrencyY.EUR.type :+: CurrencyY.XXX.type :+: CNil
+  import shapeless.union.Union
+  type Curency = Union.`'eur -> CurrencyY.EUR, 'usd -> CurrencyY.USD`.T
+}
+
+//TODO ... ISO-4217
 trait Currency {
   abstract sealed class CCC(name: String)
   case object AED extends CCC("AED")
