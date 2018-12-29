@@ -1,7 +1,14 @@
 package app.fmgp.money
 
-trait Converter[FROM, TO] {
+import cats.data.Writer
+import cats.instances.vector._
+import cats.syntax.writer._
+import cats.syntax.applicative._
+
+trait Converter[-FROM, TO] {
   def convert(from: FROM): TO
+  type Logged[A] = Writer[Vector[String], A]
+  def convertWithLog(from: FROM): Logged[TO]
 }
 
 //TODO REMOVE THIS WILL NOT WORK
@@ -18,40 +25,29 @@ case class ShapelessConverter[T <: EUR_XXX.type](eur: Double, xxx: Double) exten
   }
 
   def convert(money: MoneyY[EUR_XXX.type]): MoneyY[T] = ???
+  override def convertWithLog(from: MoneyY[EUR_XXX.type]): Logged[MoneyY[T]] = ???
 }
 
-case class PartialRateConverter[C, T <: C](pf: PartialFunction[MoneyY[C], MoneyY[T]]) extends Converter[MoneyY[C], MoneyY[T]] {
-  /** @throws MatchError case a conversion rate is missing () */
-  def convert(money: MoneyY[C]): MoneyY[T] = apply(money)
-  def convertOption(money: MoneyY[C]): Option[MoneyY[T]] = if (isDefinedAt(money)) Some(apply(money)) else None
-  def isDefinedAt(money: MoneyY[C]): Boolean = pf.isDefinedAt(money)
-  //TODO def isDefinedAt[F[_]](money: F[MoneyY[C]])(f: Functor[F]): Boolean = f.map(money)(e => isDefinedAt(e))
-  def apply(money: MoneyY[C]): MoneyY[T] = pf(money)
-}
-
-object PartialRateConverter {
-  def tToT[C, T](to: T): PartialFunction[MoneyY[C], MoneyY[T]] = {
-    case MoneyY(a, `to`) => MoneyY[T](a, to) //m.asInstanceOf[MoneyY[T]] //THIS WAS A SAFE CAST
+case class PartialRateConverter[C, T <: C](to: T, rates: Map[C, BigDecimal]) extends Converter[MoneyY[C], MoneyY[T]] {
+  def tToT[C, T](to: T): PartialFunction[MoneyY[C], Logged[MoneyY[T]]] = {
+    case MoneyY(a, `to`) => MoneyY[T](a, to).pure[Logged] //m.asInstanceOf[MoneyY[T]] //THIS WAS A SAFE CAST
   }
-
-  def fromMapRates[C, T <: C](to: T, rates: Map[C, BigDecimal]) = {
+  val pf: PartialFunction[MoneyY[C], Logged[MoneyY[T]]] = {
     val ii = rates.filterNot(_._1 == to).map {
       case (from, rate) =>
-        val pf: PartialFunction[MoneyY[C], MoneyY[T]] = {
-          case MoneyY(amount, `from`) => MoneyY[T](amount * rate, to)
+        val pf: PartialFunction[MoneyY[C], Logged[MoneyY[T]]] = {
+          case MoneyY(amount, `from`) => MoneyY[T](amount * rate, to).writer(Vector(s"$amount$from($rate)->${amount * rate}$to"))
         }
         pf
     }
-    PartialRateConverter(tToT[C, T](to) orElse ii.reduce((a, b) => a orElse b))
+    tToT[C, T](to) orElse ii.reduce((a, b) => a orElse b)
   }
 
-  def fromPFRates[C, T <: C](to: T, rates: PartialFunction[C, BigDecimal]) = {
-    new PartialFunction[MoneyY[C], MoneyY[T]] {
-      override def isDefinedAt(x: MoneyY[C]): Boolean = rates.isDefinedAt(x.currency)
-      override def apply(v1: MoneyY[C]): MoneyY[T] = {
-        val rate = rates(v1.currency)
-        MoneyY[T](v1.amount * rate, to)
-      }
-    }
-  }
+  /** @throws MatchError case a conversion rate is missing () */
+  override def convert(money: MoneyY[C]): MoneyY[T] = apply(money).value
+  override def convertWithLog(money: MoneyY[C]): Logged[MoneyY[T]] = apply(money)
+  //def convertOption(money: MoneyY[C]): Option[MoneyY[T]] = if (isDefinedAt(money)) Some(apply(money)) else None
+  def isDefinedAt(money: MoneyY[C]): Boolean = pf.isDefinedAt(money)
+  //TODO def isDefinedAt[F[_]](money: F[MoneyY[C]])(f: Functor[F]): Boolean = f.map(money)(e => isDefinedAt(e))
+  def apply(money: MoneyY[C]): Logged[MoneyY[T]] = pf(money)
 }

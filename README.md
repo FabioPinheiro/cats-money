@@ -37,8 +37,10 @@ The current maintainers (people who can merge pull requests) are:
  * *Fabio Pinheiro* - [BitBucket](https://bitbucket.org/FabioPinheiro/) / [GitHub](https://github.com/FabioPinheiro)
 
 #### TODO LIST
-  * implement the rates conversion
+  * implement: 
+    * Traverse\[MoneyTree\]
   * rename classes and draw a UML
+    * rename MoneyY and CurrencyY
   * currency
     * add all currencies from ISO-4217
     * create subset type of currencies
@@ -65,8 +67,7 @@ The current maintainers (people who can merge pull requests) are:
       * just need to store the structure when doing the loop (see code)
     * testing for non-compilation of type unsafe
       * [shapeless.test.illTyped][shapeless]
-  * *DEMO:*
-    * Use the cats's Writer Monad to make log about the conversion
+  * *DEMO:* (+- Done)
 
 
 ### Copyright and License
@@ -77,10 +78,9 @@ http://opensource.org/licenses/mit-license.php and also in the
 
 Copyright the Fabio Pinheiro, 2018.
 
-
 [cats-badge]: https://typelevel.org/cats/img/cats-badge-tiny.png
+[cats-infographic]: https://github.com/tpolecat/cats-infographic
 [book]: https://underscore.io/books/advanced-scala
-[license]: https://creativecommons.org/publicdomain/zero/1.0/
 [sbt]: http://scala-sbt.org
 [scala-ide]: http://scala-ide.org
 [scala-metals]: https://scalameta.org/metals/

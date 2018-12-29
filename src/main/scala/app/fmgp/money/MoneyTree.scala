@@ -1,6 +1,8 @@
 package app.fmgp.money
 
 
+import cats.Monad
+import cats.data.Writer
 import cats.kernel.{Eq, Monoid}
 
 sealed abstract class MoneyTree[+T] {
@@ -18,6 +20,12 @@ sealed abstract class MoneyTree[+T] {
   def prepend[S >: T](a: S): MoneyTree[S]
   def append[S >: T](a: S): MoneyTree[S]
   def concat[S >: T](other: Seq[S]): MoneyTree[S]
+
+  def convert[TT](converter: Converter[T, TT])(implicit mt: Monad[MoneyTree]): MoneyTree[TT] =
+    mt.map(this)(e => converter.convert(e))
+  def convertWithLog[TT](converter: Converter[T, TT])(implicit mt: Monad[MoneyTree]): MoneyTree[Writer[Vector[String], TT]] =
+    mt.map(this)(e => converter.convertWithLog(e))
+  def total[S >: T](implicit monoid: Monoid[S]): S
 }
 
 final case class MoneyZBranch[T](value: Seq[MoneyTree[T]]) extends MoneyTree[T] {
@@ -33,6 +41,7 @@ final case class MoneyZBranch[T](value: Seq[MoneyTree[T]]) extends MoneyTree[T] 
     case v: MoneyZLeaf[S] => MoneyZBranch(value :+ v)
   }
   def concat[S >: T](other: Seq[S]): MoneyTree[S] = MoneyZBranch(value ++ other.map(MoneyTree.one))
+  override def total[S >: T](implicit monoid: Monoid[S]): S = monoid.combineAll(value.map(_.total(monoid)))
 }
 
 final case class MoneyZLeaf[T](value: T) extends MoneyTree[T] {
@@ -45,7 +54,7 @@ final case class MoneyZLeaf[T](value: T) extends MoneyTree[T] {
     case v: MoneyZLeaf[S] => MoneyZBranch[S](Seq(this, v))
   }
   def concat[S >: T](other: Seq[S]): MoneyTree[S] = MoneyZBranch((value +: other).map(MoneyTree.one))
-  //def concat[S >: T](other: Seq[S]): MoneyTree[S] = MoneyZBranch(other.foldLeft(Seq[S](value))((seq, e) => seq :+ e).map(MoneyTree.one))
+  override def total[S >: T](implicit monoid: Monoid[S]): S = value
 }
 
 object MoneyTree {
@@ -54,11 +63,6 @@ object MoneyTree {
   def branch[T](m: Seq[MoneyTree[T]]): MoneyTree[T] = MoneyZBranch[T](m)
   def join[T](m: MoneyTree[T]*): MoneyTree[T] = MoneyZBranch[T](m)
   def leafs[T](m: T*): MoneyTree[T] = MoneyZBranch[T](m.map(one))
-
-  def total[C, T <: C](x: MoneyTree[C], converter: Converter[C, T])(implicit monoid: Monoid[T]): T = x match {
-    case MoneyZLeaf(value) => converter.convert(value)
-    case MoneyZBranch(seq) => monoid.combineAll(seq.map(e => total(e, converter)))
-  }
 
   implicit def eqTree[T: Eq]: Eq[MoneyTree[T]] = Eq.fromUniversalEquals
 }

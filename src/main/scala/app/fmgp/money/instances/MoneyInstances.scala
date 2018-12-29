@@ -32,7 +32,8 @@ trait MoneyInstancesC[CURRENCY] extends MoneyInstances {
 
 class MoneyMonoidC[CURRENCY, C <: CURRENCY](c: C, partialRateConverter: PartialRateConverter[CURRENCY, C]) extends Monoid[MoneyY[CURRENCY]] {
   implicit val monoidOfManeyC: MoneyMonoid[CURRENCY] = new MoneyMonoid[CURRENCY](c)
-  override def combine(x: MoneyY[CURRENCY], y: MoneyY[CURRENCY]): MoneyY[CURRENCY] = monoidOfManeyC.combine(partialRateConverter(x), partialRateConverter(y))
+  override def combine(x: MoneyY[CURRENCY], y: MoneyY[CURRENCY]): MoneyY[CURRENCY] =
+    monoidOfManeyC.combine(partialRateConverter.convert(x), partialRateConverter.convert(y))
   override def empty: MoneyY[CURRENCY] = MoneyY[CURRENCY](0, c)
 }
 

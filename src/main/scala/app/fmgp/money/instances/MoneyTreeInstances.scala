@@ -1,12 +1,13 @@
 package app.fmgp.money.instances
 
 import app.fmgp.money.{MoneyTree, MoneyZBranch, MoneyZLeaf}
-import cats.{Applicative, Functor, Monad}
+import cats.{Applicative, Eval, Functor, Monad, Traverse}
 
 
 trait MoneyTreeInstances {
   implicit val MoneyTreeFunctor: Functor[MoneyTree] = new MoneyTreeFunctor
   implicit val MoneyTreeMonad: Monad[MoneyTree] = new MoneyTreeMonad
+  implicit val MoneyTreeTraverse: Traverse[MoneyTree] = new MoneyTreeTraverse
 }
 
 class MoneyTreeFunctor extends Functor[MoneyTree] {
@@ -35,6 +36,12 @@ class MoneyTreeApplicative extends Applicative[MoneyTree] {
       case x@MoneyZBranch(_) => x.collectValues.headOption.map(a2b => MoneyTree.one(a2b(v))).getOrElse(MoneyTree.empty) //HUM ... (this inner match is bad)
     }
   }
+}
+
+class MoneyTreeTraverse extends Traverse[MoneyTree] {
+  override def traverse[G[_], A, B](fa: MoneyTree[A])(f: A => G[B])(implicit evidence$1: Applicative[G]): G[MoneyTree[B]] = ???
+  override def foldLeft[A, B](fa: MoneyTree[A], b: B)(f: (B, A) => B): B = fa.collectValues.foldLeft(b)(f)
+  override def foldRight[A, B](fa: MoneyTree[A], lb: Eval[B])(f: (A, Eval[B]) => Eval[B]): Eval[B] = ???
 }
 
 class MoneyTreeMonad extends Monad[MoneyTree] {
