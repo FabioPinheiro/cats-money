@@ -1,11 +1,11 @@
 package app.fmgp.money
 
-trait Converter[C, T <: C] {
-  def convert(money: MoneyY[C]): MoneyY[T]
+trait Converter[FROM, TO] {
+  def convert(from: FROM): TO
 }
 
 //TODO REMOVE THIS WILL NOT WORK
-case class ShapelessConverter[T <: EUR_XXX.type](eur: Double, xxx: Double) extends Converter[EUR_XXX.type, T] {
+case class ShapelessConverter[T <: EUR_XXX.type](eur: Double, xxx: Double) extends Converter[MoneyY[EUR_XXX.type], MoneyY[T]] {
 
   object poly extends shapeless.Poly1 {
     implicit def caseEUR = at[CurrencyY.EUR.type](s => eur)
@@ -20,9 +20,10 @@ case class ShapelessConverter[T <: EUR_XXX.type](eur: Double, xxx: Double) exten
   def convert(money: MoneyY[EUR_XXX.type]): MoneyY[T] = ???
 }
 
-case class PartialRateConverter[C, T <: C](pf: PartialFunction[MoneyY[C], MoneyY[T]]) extends Converter[C, T] {
+case class PartialRateConverter[C, T <: C](pf: PartialFunction[MoneyY[C], MoneyY[T]]) extends Converter[MoneyY[C], MoneyY[T]] {
   /** @throws MatchError case a conversion rate is missing () */
   def convert(money: MoneyY[C]): MoneyY[T] = apply(money)
+  def convertOption(money: MoneyY[C]): Option[MoneyY[T]] = if (isDefinedAt(money)) Some(apply(money)) else None
   def isDefinedAt(money: MoneyY[C]): Boolean = pf.isDefinedAt(money)
   //TODO def isDefinedAt[F[_]](money: F[MoneyY[C]])(f: Functor[F]): Boolean = f.map(money)(e => isDefinedAt(e))
   def apply(money: MoneyY[C]): MoneyY[T] = pf(money)
@@ -43,6 +44,7 @@ object PartialRateConverter {
     }
     PartialRateConverter(tToT[C, T](to) orElse ii.reduce((a, b) => a orElse b))
   }
+
   def fromPFRates[C, T <: C](to: T, rates: PartialFunction[C, BigDecimal]) = {
     new PartialFunction[MoneyY[C], MoneyY[T]] {
       override def isDefinedAt(x: MoneyY[C]): Boolean = rates.isDefinedAt(x.currency)

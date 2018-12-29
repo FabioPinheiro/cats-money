@@ -1,7 +1,7 @@
 package app.fmgp.money.instances
 
 import app.fmgp.money.{MoneyTree, MoneyZBranch, MoneyZLeaf}
-import cats.{Functor, Monad}
+import cats.{Applicative, Functor, Monad}
 
 
 trait MoneyTreeInstances {
@@ -15,6 +15,26 @@ class MoneyTreeFunctor extends Functor[MoneyTree] {
       case MoneyZBranch(value) => MoneyZBranch(value.map(e => map(e)(func)))
       case MoneyZLeaf(value) => MoneyZLeaf[B](func(value))
     }
+}
+
+//class MoneyTreeSemigroupal extends Semigroupal[MoneyTree] {
+//  override def product[A, B](fa: MoneyTree[A], fb: MoneyTree[B]): MoneyTree[(A, B)] = (fa, fb) match {
+//    case (MoneyZLeaf(va),MoneyZLeaf(vb)) => MoneyZLeaf((va,vb))
+//    case (MoneyZBranch(va),MoneyZLeaf(vb)) => MoneyZBranch((va,vb))
+//    case (MoneyZLeaf(va),MoneyZBranch(vb)) => MoneyZBranch((va,vb))
+//    case (MoneyZBranch(va),MoneyZBranch(vb)) => MoneyZBranch((va,vb))
+//  }
+//}
+
+class MoneyTreeApplicative extends Applicative[MoneyTree] {
+  override def pure[A](x: A): MoneyTree[A] = MoneyZLeaf(x)
+  override def ap[A, B](ff: MoneyTree[A => B])(fa: MoneyTree[A]): MoneyTree[B] = fa match {
+    case MoneyZBranch(seq) => MoneyZBranch(seq.map(ap(ff)))
+    case MoneyZLeaf(v) => ff match {
+      case MoneyZLeaf(a2b) => MoneyZLeaf(a2b(v))
+      case x@MoneyZBranch(_) => x.collectValues.headOption.map(a2b => MoneyTree.one(a2b(v))).getOrElse(MoneyTree.empty) //HUM ... (this inner match is bad)
+    }
+  }
 }
 
 class MoneyTreeMonad extends Monad[MoneyTree] {

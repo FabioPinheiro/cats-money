@@ -2,7 +2,6 @@ package app.fmgp.money
 
 import app.fmgp
 import app.fmgp.money._
-import app.fmgp.money.instances.all._
 import app.fmgp.sandbox.{Rate, Wallet}
 import cats.syntax.monoid._
 import cats.Eq
@@ -16,27 +15,32 @@ object Main extends App {
   import app.fmgp.sandbox.Wallet.Y._
   import app.fmgp.money.CurrencyY._
 
-  val a: MoneyY[CurrencyY.CY] = MoneyY(111, USD)
-  val b = MoneyY(222, USD)
-  val c = MoneyY(9000, EUR)
+  type MonetaryValue = MoneyY[CurrencyY.CY]
+  type XPTO = MoneyTree[MonetaryValue]
 
-  println(a, b, c)
+  val a = MoneyY(100, USD)
+  val b = MoneyY(200, USD)
+  val c = MoneyY(300, GBP)
+  val d = MoneyY(9000, EUR)
+
+  import cats.syntax.applicative._
+  import app.fmgp.money.instances.CY.all._
+
+  // for pure
+  val m: MoneyTree[MoneyY[CY]] = a.pure[MoneyTree] :+ b :+ c :+ d
+  val m2: MoneyTree[MoneyY[CY]] = a.pure[MoneyTree].concat(Seq(b, c, d))
+  println(m, m == m2)
+  val rc = PartialRateConverter.fromMapRates[CY, EUR.type](EUR, Map(USD -> 0.8, GBP -> 1.1))
+  val total = MoneyTree.total(m, rc)(moneyYMonoidT(EUR))
+
+  println(s"TOTAL m is $total")
+
+  /*
   val w1: Wallet[CY] = Wallet.Y.fromMoney(a) |+| Wallet.Y.fromMoney(b) |+| Wallet.Y.fromMoney(c)
   val w11 = Wallet.Y.fromMoney(b) |+| Wallet.Y.fromMoney(c)
   println(w1, w11)
 
-  //  val x0 = MoneyY(100, FFF)
-  //  val x1 = MoneyY(1, FFF1)
-  //  val x2 = MoneyY(10, FFF2)
-  //  val rate1 = Rate(FFF, EUR, 1.5)
-  //  val w2: Wallet[CurrencyY] = Wallet.Y.fromMoney(x0) |+| Wallet.Y.fromMoney(x1) |+| Wallet.Y.fromMoney(x2) //|+| Wallet.Y.fromMoney(c)
-  //  println(w2, rate1.convert(w2)) //FIXME
-
-
   import shapeless._, record._, union._, syntax.singleton._
-
-
-
 
   val UUU = Coproduct[EUR_XXX.Curency]('eur ->> EUR)
   val converter = ShapelessConverter(1.1,0)
@@ -51,7 +55,7 @@ object Main extends App {
     implicit def caseTuple[T, U](implicit st: Case.Aux[T, Int], su: Case.Aux[U, Int]) = at[(T, U)](t => size(t._1) + size(t._2))
   }
   println("size(23)", size((230, 123)))
-
+*/
 }
 
 

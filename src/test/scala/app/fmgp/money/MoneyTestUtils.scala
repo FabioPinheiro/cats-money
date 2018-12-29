@@ -31,17 +31,17 @@ trait MoneyTestUtils {
 
   implicit def arbitraryMoneyTree: Arbitrary[MoneyTree[MoneyY[CY]]] = Arbitrary(for {
     money <- Gen.infiniteStream(arbitraryMoneyX.arbitrary)
-    aux = money.take(10).map(MoneyTree.leaf)
+    aux = money.take(10).map(MoneyTree.one)
   } yield MoneyTree.branch(aux))
 
   implicit def arbitraryMoneyTreeXXX: Arbitrary[MoneyTree[MoneyY[XXX.type]]] = Arbitrary(for {
     money <- Gen.infiniteStream(fArbitraryMoney(XXX).arbitrary)
-    aux = money.take(10).map(MoneyTree.leaf)
+    aux = money.take(10).map(MoneyTree.one)
   } yield MoneyTree.branch(aux))
 
   implicit def arbitraryMoneyTreeEUR: Arbitrary[MoneyTree[MoneyY[EUR.type]]] = Arbitrary(for {
     money <- Gen.infiniteStream(fArbitraryMoney(EUR).arbitrary)
-    aux = money.take(10).map(MoneyTree.leaf)
+    aux = money.take(10).map(MoneyTree.one)
   } yield MoneyTree.branch(aux))
 
 

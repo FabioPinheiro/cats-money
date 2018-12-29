@@ -27,12 +27,12 @@ class MoneySpec extends Specification {
   }
   "MoneyTree" >> {
     "create MoneyTree" >> {
-      val m1 = MoneyTree.leaf(MoneyY(1, EUR))
-      val m2 = MoneyTree.leaf(MoneyY(2, EUR))
-      val m3 = MoneyTree.leaf(MoneyY(3, USD))
+      val m1 = MoneyTree.one(MoneyY(1, EUR))
+      val m2 = MoneyTree.one(MoneyY(2, EUR))
+      val m3 = MoneyTree.one(MoneyY(3, USD))
       val t1 = MoneyTree.join(m1, m2, m3)
       val t2 = MoneyTree.join(m1, m2, t1)
-      val tInts3 = MoneyTree.join[Int](MoneyTree.joinLeaf(1, 2), MoneyTree.leaf(3), MoneyTree.joinLeaf(4, 5))
+      val tInts3 = MoneyTree.join[Int](MoneyTree.leafs(1, 2), MoneyTree.one(3), MoneyTree.leafs(4, 5))
       "join" >> {
         Seq(t1, t2) must forall(beLike {
           case MoneyZBranch(v) => v post "the number of values inside the tree" must haveSize(3)
@@ -57,13 +57,13 @@ class MoneySpec extends Specification {
   }
   "Collector" >> {
     "Unsafe collector" >> {
-      val m1 = MoneyTree.leaf(MoneyY(1, USD))
-      val m2 = MoneyTree.leaf(MoneyY(10, EUR))
-      val m3 = MoneyTree.leaf(MoneyY(100, USD))
-      val m4 = MoneyTree.leaf(MoneyY(1000, EUR))
-      val m5 = MoneyTree.leaf(MoneyY(10000, USD))
-      val m6 = MoneyTree.leaf(MoneyY(2, GBP))
-      val m7 = MoneyTree.leaf(MoneyY(4, XXX))
+      val m1 = MoneyTree.one(MoneyY(1, USD))
+      val m2 = MoneyTree.one(MoneyY(10, EUR))
+      val m3 = MoneyTree.one(MoneyY(100, USD))
+      val m4 = MoneyTree.one(MoneyY(1000, EUR))
+      val m5 = MoneyTree.one(MoneyY(10000, USD))
+      val m6 = MoneyTree.one(MoneyY(2, GBP))
+      val m7 = MoneyTree.one(MoneyY(4, XXX))
 
       val t1 = MoneyTree.join(m1, m2, m3)
       val t2 = MoneyTree.join(m1, m2, MoneyTree.join(m3), MoneyTree.join(m4, m5))
