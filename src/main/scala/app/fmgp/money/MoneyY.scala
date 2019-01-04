@@ -9,3 +9,5 @@ object MoneyY {
   def fromTuple[T](m: (T, BigDecimal)): MoneyY[T] = MoneyY.apply(m._2, m._1)
   implicit def eqv[T]: Eq[MoneyY[T]] = Eq.fromUniversalEquals
 }
+
+case class MoneyZ[T](amount: BigDecimal) //This must be invariant in type T to correctly support monoidK

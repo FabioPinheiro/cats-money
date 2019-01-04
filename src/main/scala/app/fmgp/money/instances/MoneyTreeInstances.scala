@@ -1,10 +1,17 @@
 package app.fmgp.money.instances
 
 import app.fmgp.money.{MoneyTree, MoneyZBranch, MoneyZLeaf}
-import cats.{Applicative, Eval, Functor, Monad, Traverse}
+import cats.{Applicative, Eval, Functor, Monad, Show, Traverse}
 
 
 trait MoneyTreeInstances {
+  implicit def MoneyTreeShow[T](implicit showT: Show[T]): Show[MoneyTree[T]] = Show.show(elem => {
+    def loop(mt: MoneyTree[T])(implicit showT: Show[T]): String = mt match {
+      case MoneyZBranch(value) => value.map(e => loop(e)).mkString("[", " + ", "]")
+      case MoneyZLeaf(value) => showT.show(value)
+    }
+    loop(elem)
+  })
   implicit val MoneyTreeFunctor: Functor[MoneyTree] = new MoneyTreeFunctor
   implicit val MoneyTreeMonad: Monad[MoneyTree] = new MoneyTreeMonad
   implicit val MoneyTreeTraverse: Traverse[MoneyTree] = new MoneyTreeTraverse
@@ -17,15 +24,6 @@ class MoneyTreeFunctor extends Functor[MoneyTree] {
       case MoneyZLeaf(value) => MoneyZLeaf[B](func(value))
     }
 }
-
-//class MoneyTreeSemigroupal extends Semigroupal[MoneyTree] {
-//  override def product[A, B](fa: MoneyTree[A], fb: MoneyTree[B]): MoneyTree[(A, B)] = (fa, fb) match {
-//    case (MoneyZLeaf(va),MoneyZLeaf(vb)) => MoneyZLeaf((va,vb))
-//    case (MoneyZBranch(va),MoneyZLeaf(vb)) => MoneyZBranch((va,vb))
-//    case (MoneyZLeaf(va),MoneyZBranch(vb)) => MoneyZBranch((va,vb))
-//    case (MoneyZBranch(va),MoneyZBranch(vb)) => MoneyZBranch((va,vb))
-//  }
-//}
 
 class MoneyTreeApplicative extends Applicative[MoneyTree] {
   override def pure[A](x: A): MoneyTree[A] = MoneyZLeaf(x)

@@ -29,7 +29,7 @@ case class ShapelessConverter[T <: EUR_XXX.type](eur: Double, xxx: Double) exten
 }
 
 case class PartialRateConverter[C, T <: C](to: T, rates: Map[C, BigDecimal]) extends Converter[MoneyY[C], MoneyY[T]] {
-  def tToT[C, T](to: T): PartialFunction[MoneyY[C], Logged[MoneyY[T]]] = {
+  def tToT(to: T): PartialFunction[MoneyY[C], Logged[MoneyY[T]]] = {
     case MoneyY(a, `to`) => MoneyY[T](a, to).pure[Logged] //m.asInstanceOf[MoneyY[T]] //THIS WAS A SAFE CAST
   }
   val pf: PartialFunction[MoneyY[C], Logged[MoneyY[T]]] = {
@@ -40,7 +40,7 @@ case class PartialRateConverter[C, T <: C](to: T, rates: Map[C, BigDecimal]) ext
         }
         pf
     }
-    tToT[C, T](to) orElse ii.reduce((a, b) => a orElse b)
+    tToT(to) orElse ii.reduce((a, b) => a orElse b)
   }
 
   /** @throws MatchError case a conversion rate is missing () */
