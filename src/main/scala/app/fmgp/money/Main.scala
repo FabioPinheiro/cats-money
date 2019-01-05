@@ -1,20 +1,17 @@
 package app.fmgp.money
 
+import app.fmgp.money.instances.MoneyInstances.{MoneyZWithTag, ring}
 import cats.syntax.all._
-//import cats.implicits._
 
 object Main extends App {
 
   import app.fmgp.money.CurrencyY._
-  import app.fmgp.money.instances.CY.all._
+  import app.fmgp.money.instances.all._
 
   val aa = MoneyZ[USD.type](100)
   val bb = MoneyZ[USD.type](200)
   val cc = MoneyZ[GBP.type](300)
   val dd = MoneyZ[EUR.type](9000)
-
-  import app.fmgp.money.Companion._
-  //import app.fmgp.money.Companion.MoneyWithCompanion //to get currency
 
   println(s"MoneyZ: .currency  ${aa.currency}")
   println(s"MoneyZ: Companion  ${Companion.of(aa)}")
@@ -22,6 +19,55 @@ object Main extends App {
   println(s"MoneyZ: show       ${show"$aa"}")
 
   Currency.test
+
+  import shapeless._, record._, union._, syntax.singleton._
+
+//  implicit val gUSD = Generic[MoneyZ[USD.type]]
+//  implicit val gEUR = Generic[MoneyZ[EUR.type]]
+//  implicit val gGBP = Generic[MoneyZ[GBP.type]]
+//  //def gXPTO[T] = Generic[MoneyZ[T]]
+//
+//  val f = (gEUR.from _).compose(gGBP.to _)
+//  println(f, f.apply(cc).show)
+
+  implicit class MoneyXPTO[FROM](value: MoneyZ[FROM]) {
+    def to[TO, R <: HList](c: TO)(
+      implicit
+      genFrom: Generic.Aux[MoneyZ[FROM], R],
+      genTo: Generic.Aux[MoneyZ[TO], R],
+      fromRing: MoneyZWithTag[FROM],
+      toRing: MoneyZWithTag[TO]
+    ): MoneyZ[TO] = {
+      object ring extends Poly3 {
+        val fa: MoneyZ[FROM] => R = genFrom.to _
+        val fb: R => MoneyZ[TO] = genTo.from _
+        val fab: MoneyZ[FROM] => MoneyZ[TO] = fa.andThen(fb)
+
+        implicit val r2rCase: Case.Aux[MoneyZ[FROM], MoneyZWithTag[FROM], MoneyZWithTag[TO], MoneyZ[TO]] = at { (v, aa, bb) =>
+          val inputValueOnBase = v.asInstanceOf[MoneyZWithTag[FROM]] <+> aa
+          val outputValueOnBase = fab.apply(inputValueOnBase)
+          outputValueOnBase.asInstanceOf[MoneyZWithTag[TO]] <+> bb
+        }
+      }
+      ring(value, fromRing, toRing)
+    }
+  }
+
+  implicit val xGDP = ring(GBP, 1.2) //same as  MoneyZ[GBP.type](1.2d).asInstanceOf[MoneyZWithTag[CurrencyY.GBP.type]]
+  implicit val xUSD = ring(USD, 1) //same as MoneyZ[USD.type](1d).asInstanceOf[MoneyZWithTag[CurrencyY.USD.type]]
+  implicit val xEUR = ring(EUR, 1.32)
+
+  println(cc.show, cc.to(USD).show, cc.to(USD).to(USD).show)
+  println(cc.show, cc.to(EUR).show, cc.to(USD).to(EUR).show)
+
+
+  //val aux: Vector[MoneyZWithTag[_]] = runtime.toVector.map(e => ring(e._1, e._2)).map(e => println(moneyZShow.show(e))) //This don't not work type erasure
+  val runtime = Map(GBP->1.2d, USD -> 1d, EUR -> 1.32d)
+  val ringHLint = (GBP->1.2d) :: (USD -> 1d) :: (EUR -> 1.32d) :: HNil
+  val head = ringHLint.head
+  println(ringHLint, head)
+  //TODO convert a Seq into a ring at runtime
+  println(ring(head._1,head._2).show)
 }
 
 /*
