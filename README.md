@@ -68,6 +68,7 @@ The current maintainers (people who can merge pull requests) are:
     * testing for non-compilation of type unsafe
       * [shapeless.test.illTyped][shapeless]
   * *DEMO:* (+- Done)
+  * *TO TRY:* Epimorphism, Monomorphism, Isomorphism
 
 
 ### Copyright and License

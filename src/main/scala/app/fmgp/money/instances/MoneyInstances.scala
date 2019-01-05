@@ -1,12 +1,18 @@
 package app.fmgp.money.instances
 
-import app.fmgp.money.{Companion, MoneyY, MoneyZ, PartialRateConverter}
+import app.fmgp.money._
+import app.fmgp.money.instances.MoneyInstances.MoneyZWithTag
 import cats.{MonoidK, Show}
 import cats.kernel.{Monoid, Order}
 import cats.syntax.monoid._
 import cats.instances.bigDecimal._
 
 import scala.language.implicitConversions
+
+object MoneyInstances{
+  type MoneyZWithTag[A] = MoneyZ[A] with MyTag
+  type MoneyYWithTag[A] = MoneyY[A] with MyTag
+}
 
 trait MoneyInstances {
   //### MoneyY ###
@@ -21,6 +27,7 @@ trait MoneyInstances {
   implicit def moneyZShow[T](implicit /*showT: Show[T],*/ companionT: Companion[T]): Show[MoneyZ[T]] =
     Show.show(money => money.amount + " " + money.currency)
   implicit def moneyZMonoidK[T]: MonoidK[MoneyZ] = new MoneyMonoidK
+  //implicit def moneyMonoidKMultiplication[T]: MonoidK[MoneyZ] = new MoneyMonoidKMultiplication
 }
 
 class moneyOrder[T, C <: T] extends Order[MoneyY[C]] {
@@ -39,6 +46,16 @@ class MoneyMonoid[C](c: C) extends Monoid[MoneyY[C]] {
 class MoneyMonoidK extends MonoidK[MoneyZ] {
   override def empty[A]: MoneyZ[A] = MoneyZ[A](0)
   override def combineK[A](x: MoneyZ[A], y: MoneyZ[A]): MoneyZ[A] = MoneyZ[A](x.amount |+| y.amount)
+}
+
+//class MoneyMonoidKMultiplication extends MonoidK[MoneyZ] {
+//  override def empty[A]: MoneyZ[A] = MoneyZ[A](0)
+//  override def combineK[A](x: MoneyZ[A], y: MoneyZ[A]): MoneyZ[A] = MoneyZ[A](x.amount * y.amount)
+//}
+
+class MoneyMonoidKWithTag extends MonoidK[MoneyZWithTag] {
+  override def empty[A]: MoneyZWithTag[A] = MoneyZ[A](0).asInstanceOf[MoneyZWithTag[A]]
+  override def combineK[A](x: MoneyZWithTag[A], y: MoneyZWithTag[A]): MoneyZWithTag[A] = (x.amount * y.amount).asInstanceOf[MoneyZWithTag[A]]
 }
 
 // With CURRENCY
