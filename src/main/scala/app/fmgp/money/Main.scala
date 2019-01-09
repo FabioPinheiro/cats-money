@@ -68,6 +68,25 @@ object Main extends App {
   println(ringHLint, head)
   //TODO convert a Seq into a ring at runtime
   println(ring(head._1,head._2).show)
+  val base: HList = EUR :: HNil
+  def loop2 = USD :: base
+  def loop3 = GBP :: loop2
+  println(loop3)
+  println(ringHLint.unzip._1)
+
+  def OP(vector:Vector[_]): HList = {
+    def loop(v:Seq[_], l:HList): HList = v match {
+      case x if !x.isEmpty => loop(x.tail, x.head :: l)
+      case _ => l
+    }
+    loop(vector, HNil)
+  }
+  val types = Vector(EUR, USD, GBP)
+  println(OP(types))
+
+  import scala.reflect.runtime.universe._
+  println(reify(ring(GBP, 123)))
+
 }
 
 /*
