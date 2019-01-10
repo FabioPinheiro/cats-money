@@ -69,8 +69,8 @@ class MoneySpec extends Specification {
       val t2 = MoneyTree.join(m1, m2, MoneyTree.join(m3), MoneyTree.join(m4, m5))
       val t3 = MoneyTree.join(m1, m2, MoneyTree.join(m3, m6), MoneyTree.join(m4, m5))
       val t4 = MoneyTree.join(m1, m2, MoneyTree.join(m3, m6, m7), MoneyTree.join(m4, m5))
-      val c1 = PartialRateConverter.fromMapRates[CY, EUR.type](EUR, Map(USD -> 1.5))
-      val c2 = PartialRateConverter.fromMapRates[CY, EUR.type](EUR, Map(USD -> 1.5, GBP -> 0.8))
+      val c1 = PartialRateConverter[CY, EUR.type](EUR, Map(USD -> 1.5))
+      val c2 = PartialRateConverter[CY, EUR.type](EUR, Map(USD -> 1.5, GBP -> 0.8))
 
       val t2afterConverted: MoneyTree[MoneyY[CurrencyY.EUR.type]] = MoneyTreeFunctor.map(t2)(e => c1.convert(e))
       val t3afterConverted: MoneyTree[MoneyY[CurrencyY.EUR.type]] = MoneyTreeFunctor.map(t3)(e => c2.convert(e))

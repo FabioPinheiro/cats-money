@@ -4,12 +4,11 @@ import app.fmgp.money.CurrencyY._
 import app.fmgp.money.MoneyTree._
 import app.fmgp.money.instances.all._
 import cats.kernel.laws.discipline._
-import cats.laws.discipline.{FunctorTests, MonadTests}
+import cats.laws.discipline.{FunctorTests, MonadTests, MonoidKTests, TraverseTests}
 import cats.tests.CatsSuite
 
 /** testOnly app.fmgp.money.MoneyYLawTests */
 class MoneyYLawTests extends CatsSuite with MoneyTestUtils {
-
 
 
   //import Currency.eqv
@@ -24,10 +23,21 @@ class MoneyYLawTests extends CatsSuite with MoneyTestUtils {
 
   checkAll("Currency", EqTests[CY].eqv)
   checkAll("MoneyY", EqTests[MoneyY[CY]].eqv)
-  checkAll("MoneyY(XXX)", MonoidTests[MoneyY[XXX.type]].monoid)
+
+  {
+    implicit val moneyMonoidXXX = app.fmgp.money.instances.money.moneyYMonoidT(XXX)
+    checkAll("MoneyY(XXX)", MonoidTests[MoneyY[XXX.type]].monoid)
+  }
+
   //checkAll("MoneyYMap", EqTests[MoneyYMap[CY]].eqv)
   //checkAll("MoneyYMap", CommutativeSemigroupTests[MoneyYMap[CY]].commutativeSemigroup)
+  checkAll("MoneyK", MonoidKTests[MoneyK].monoidK[CY])
+
 
   checkAll("MoneyTree", FunctorTests[MoneyTree].functor[MoneyY[CY], MoneyY[EUR.type], MoneyY[XXX.type]])
   checkAll("MoneyTree", MonadTests[MoneyTree].monad[MoneyY[CY], MoneyY[EUR.type], MoneyY[XXX.type]])
+
+  //FIXME
+  checkAll("MoneyTreeTraverse", TraverseTests[MoneyTree](MoneyTreeTraverse).functor[MoneyY[CY], MoneyY[EUR.type], MoneyY[XXX.type]])
+
 }

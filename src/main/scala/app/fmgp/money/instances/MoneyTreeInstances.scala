@@ -14,7 +14,7 @@ trait MoneyTreeInstances {
   })
   implicit val MoneyTreeFunctor: Functor[MoneyTree] = new MoneyTreeFunctor
   implicit val MoneyTreeMonad: Monad[MoneyTree] = new MoneyTreeMonad
-  implicit val MoneyTreeTraverse: Traverse[MoneyTree] = new MoneyTreeTraverse
+  val MoneyTreeTraverse: Traverse[MoneyTree] = new MoneyTreeTraverse
 }
 
 class MoneyTreeFunctor extends Functor[MoneyTree] {
