@@ -3,6 +3,8 @@
 Scala functional library to deal amounts of money.
 The goal is to provide basic mathematical reasoning to work in money currency and exchange rate.
 
+[![Build Status](https://travis-ci.com/FabioPinheiro/cats-money.svg?branch=master)](https://travis-ci.com/FabioPinheiro/cats-money)
+
 ###### Power by cats & shapeless:
 
 ![Cats Friendly Badge][cats-badge] & <img src="https://pbs.twimg.com/media/Ci-p9mmXAAAlPyx.jpg:small" width="80">
