@@ -1,16 +1,12 @@
 package app.fmgp.money
 
 import cats.kernel.Eq
+import shapeless._, record._, union._, syntax.singleton._
 
 object CurrencyY {
   implicit val eqv: Eq[CY] = Eq.fromUniversalEquals
 
   abstract sealed class CY(name: String)
-
-  object XCY {
-    def apply(name: String = "XXX"): CY = new CY(name) {}
-    def empty = apply()
-  }
 
   case object XXX extends CY("XXX") //Denote a "transaction" involving no currency.
   case object XTS extends CY("XTS") //Reserved for use in testing.
@@ -21,12 +17,30 @@ object CurrencyY {
   case object EUR extends CY("EUR") //
 
   //TODO We can use shapeless to do this ... (But I need to learn it fist! XD)
-  implicit def companionXXX = new Companion[XXX.type] {type C = XXX.type; def apply() = XXX}
-  implicit def companionXTS = new Companion[XTS.type] {type C = XTS.type; def apply() = XTS}
-  implicit def companionUSD = new Companion[USD.type] {type C = USD.type; def apply() = USD}
-  implicit def companionXAU = new Companion[XAU.type] {type C = XAU.type; def apply() = XAU}
-  implicit def companionGBP = new Companion[GBP.type] {type C = GBP.type; def apply() = GBP}
-  implicit def companionEUR = new Companion[EUR.type] {type C = EUR.type; def apply() = EUR}
+  implicit def companionXXX = new Companion[XXX.type] {
+    type C = XXX.type;
+    def apply() = XXX
+  }
+  implicit def companionXTS = new Companion[XTS.type] {
+    type C = XTS.type;
+    def apply() = XTS
+  }
+  implicit def companionUSD = new Companion[USD.type] {
+    type C = USD.type;
+    def apply() = USD
+  }
+  implicit def companionXAU = new Companion[XAU.type] {
+    type C = XAU.type;
+    def apply() = XAU
+  }
+  implicit def companionGBP = new Companion[GBP.type] {
+    type C = GBP.type;
+    def apply() = GBP
+  }
+  implicit def companionEUR = new Companion[EUR.type] {
+    type C = EUR.type;
+    def apply() = EUR
+  }
 }
 
 //TODO ... ISO-4217
@@ -52,9 +66,10 @@ trait Currency {
   case object FJD extends CCC("FJD")
 }
 
+/**
+ * Currency uses the shapeless
+ */
 object Currency extends Currency {
-
-  import shapeless._, record._, union._, syntax.singleton._
 
   val xpto = Generic[CCC]
   type AUX = EUR.type :+: GBP.type :+: USD.type :+: CNil
@@ -65,32 +80,34 @@ object Currency extends Currency {
       override def apply(): A = func(GBP.asInstanceOf[A]) //FIXME
     }
 
-  implicit def companion = new Companion[USD.type] {type C = USD.type; def apply() = USD}
+  implicit def companion = new Companion[USD.type] {
+    type C = USD.type;
+    def apply() = USD
+  }
 
-
+  /*
   implicit val genericCompanionCNil: Companion[CNil] = {
     new Companion[CNil] {
       override type C = Nil.type
       override def apply(): C = Nil
     }
-    //throw new Exception("Inconceivable!")
   }
   implicit val genericCompanionCList: Companion[CNil] = {
     new Companion[CNil] {
       override type C = Nil.type
       override def apply(): C = Nil
     }
-    // throw new Exception("Inconceivable!")
   }
-//
-//  implicit def coproductCompanion[H, T <: Coproduct](
-//    implicit
-//    hCompanion: Companion[H],
-//    tCompanion: Companion[T]
-//  ): Companion[H :+: T] = createCompanion {
-//    case Inl(h) => hCompanion()
-//    case Inr(t) => tCompanion(t)
-//  }
+  */
+  //
+  //  implicit def coproductCompanion[H, T <: Coproduct](
+  //    implicit
+  //    hCompanion: Companion[H],
+  //    tCompanion: Companion[T]
+  //  ): Companion[H :+: T] = createCompanion {
+  //    case Inl(h) => hCompanion()
+  //    case Inr(t) => tCompanion(t)
+  //  }
 
   def test = {
     print("Currency TEST")

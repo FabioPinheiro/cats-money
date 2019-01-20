@@ -44,41 +44,43 @@ If anyone else is also looking for a functional approach to work with monetary v
 ### Maintainers
 The current maintainers (people who can merge pull requests) are:
 
-  * *Fabio Pinheiro* - [BitBucket](https://bitbucket.org/FabioPinheiro/) / [GitHub](https://github.com/FabioPinheiro)
+* *Fabio Pinheiro* - [BitBucket](https://bitbucket.org/FabioPinheiro/) / [GitHub](https://github.com/FabioPinheiro)
 
 #### TODO LIST
-  * implement:
-    * Traverse\[MoneyTree\]
-  * rename classes and draw a UML
-    * rename MoneyY and CurrencyY
-  * currency
-    * add all currencies from ISO-4217
-    * create subset type of currencies
-      * try [shapeless][shapeless] Union type
-        ```scala
-        type U = Union.`'a -> EUR, 'b -> USD`.T
-        val u1 = Coproduct[U]('a ->> EUR)
-        println("u1", u1)
-        ```
-      * try [Dotty Union Types](https://dotty.epfl.ch/docs/reference/union-types.html) =)
-    * implement the rates conversion on a subset of currencies
-      * try [shapeless][shapeless] polymorphic function
-        ```scala
-        object polymorphicF extends Poly1 {
-          implicit def caseEUR = at[EUR.type](i => "sEUR")
-          implicit def caseSUSD = at[USD.type](s => "sUSD")
-        }
-        type CU = EUR.type :+: USD.type :+: CNil
-        val cu = Coproduct[CU](USD)
-        println("cu", cu, cu map polymorphicF)
-        ```
-  * *TESTS:*
-    * testing for non-compilation of type unsafe
-      * [shapeless.test.illTyped][shapeless]
-  * *DEMO:* (+- Done)
-  * *TO TRY:*
-    * Epimorphism, Monomorphism and Isomorphism
-    * Rings
+* implement:
+  * [ ] Traverse\[MoneyTree\]
+* rename classes and draw a UML
+  * [X] rename MoneyY and CurrencyY files
+* currency
+  * [ ] add all currencies from ISO-4217
+  * create subset type of currencies
+    * [ ] try [shapeless][shapeless] Union type
+      ```scala
+      type U = Union.`'a -> EUR, 'b -> USD`.T
+      val u1 = Coproduct[U]('a ->> EUR)
+      println("u1", u1)
+      ```
+    * [ ] try [Dotty Union Types](https://dotty.epfl.ch/docs/reference/union-types.html) =)
+  * implement the rates conversion on a subset of currencies
+    * [ ] try [shapeless][shapeless] polymorphic function
+      ```scala
+      object polymorphicF extends Poly1 {
+        implicit def caseEUR = at[EUR.type](i => "sEUR")
+        implicit def caseSUSD = at[USD.type](s => "sUSD")
+      }
+      type CU = EUR.type :+: USD.type :+: CNil
+      val cu = Coproduct[CU](USD)
+      println("cu", cu, cu map polymorphicF)
+      ```
+* tests:
+  * [ ] testing for non-compilation of type unsafe
+    * [shapeless.test.illTyped][shapeless]
+  * [ ] add a code coverage tool
+* demo:
+  * [ ] (+- Done) Demo Main
+* to try:
+  * [ ] Epimorphism, Monomorphism and Isomorphism
+  * [X] Rings +-
 
 ### Copyright and License
 
