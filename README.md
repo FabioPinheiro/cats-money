@@ -5,6 +5,7 @@ The goal is to provide basic mathematical reasoning to work in money currency an
 
 [![Build Status](https://travis-ci.com/FabioPinheiro/cats-money.svg?branch=master)](https://travis-ci.com/FabioPinheiro/cats-money)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9e9fffffdf4e45a7b6c99bb4939a0ce3)](https://app.codacy.com/app/fabiomgpinheiro/cats-money?utm_source=github.com&utm_medium=referral&utm_content=FabioPinheiro/cats-money&utm_campaign=Badge_Grade_Dashboard)
+[![Codacy Badge](https://api.codacy.com/project/badge/Coverage/05e27a1b2c8e4f0a88183150ce3e9416)](https://www.codacy.com/app/fabiomgpinheiro/cats-money?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=FabioPinheiro/cats-money&amp;utm_campaign=Badge_Coverage)
 
 ##Power by cats & shapeless:
 
@@ -73,9 +74,9 @@ The current maintainers (people who can merge pull requests) are:
       println("cu", cu, cu map polymorphicF)
       ```
 * tests:
-  * [ ] testing for non-compilation of type unsafe
+  * [ ] Testing for non-compilation of type unsafe
     * [shapeless.test.illTyped][shapeless]
-  * [ ] add a code coverage tool
+  * [X] Add a code coverage tool (sbt-scoverage)
 * demo:
   * [ ] (+- Done) Demo Main
 * to try:
