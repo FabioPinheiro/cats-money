@@ -1,12 +1,14 @@
 package app.fmgp.money
 
+import app.fmgp.money.CurrencyY._
 import app.fmgp.money.instances.MoneyInstances.{MoneyZWithTag, ring}
+import app.fmgp.money.instances.all._
 import cats.syntax.all._
+import shapeless._, record._, union._, syntax.singleton._
 
 object Main extends App {
 
-  import app.fmgp.money.CurrencyY._
-  import app.fmgp.money.instances.all._
+
 
   val aa = MoneyZ[USD.type](100)
   val bb = MoneyZ[USD.type](200)
@@ -20,7 +22,6 @@ object Main extends App {
 
   Currency.test
 
-  import shapeless._, record._, union._, syntax.singleton._
 
 //  implicit val gUSD = Generic[MoneyZ[USD.type]]
 //  implicit val gEUR = Generic[MoneyZ[EUR.type]]

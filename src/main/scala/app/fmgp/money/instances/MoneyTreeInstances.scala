@@ -38,7 +38,7 @@ class MoneyTreeApplicative extends Applicative[MoneyTree] {
 }
 
 class MoneyTreeTraverse extends Traverse[MoneyTree] {
-  override def traverse[G[_], A, B](fa: MoneyTree[A])(f: A => G[B])(implicit evidence$1: Applicative[G]): G[MoneyTree[B]] = ???
+  override def traverse[G[_], A, B](fa: MoneyTree[A])(f: A => G[B])(implicit evidence: Applicative[G]): G[MoneyTree[B]] = ???
   override def foldLeft[A, B](fa: MoneyTree[A], b: B)(f: (B, A) => B): B = fa.collectValues.foldLeft(b)(f)
   override def foldRight[A, B](fa: MoneyTree[A], lb: Eval[B])(f: (A, Eval[B]) => Eval[B]): Eval[B] = ???
 }

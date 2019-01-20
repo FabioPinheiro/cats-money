@@ -11,23 +11,6 @@ trait Converter[-FROM, TO] {
   def convertWithLog(from: FROM): Logged[TO]
 }
 
-//TODO REMOVE THIS WILL NOT WORK
-case class ShapelessConverter[T <: EUR_XXX.type](eur: Double, xxx: Double) extends Converter[MoneyY[EUR_XXX.type], MoneyY[T]] {
-
-  object poly extends shapeless.Poly1 {
-    implicit def caseEUR = at[CurrencyY.EUR.type](s => eur)
-    implicit def caseXXX = at[CurrencyY.XXX.type](s => xxx)
-  }
-
-  def convertTODO(money: MoneyY[CurrencyY.EUR.type]): MoneyY[T] = {
-    val pf = poly(money.currency)
-    ??? //MoneyY(money.amount * pf, T)
-  }
-
-  def convert(money: MoneyY[EUR_XXX.type]): MoneyY[T] = ???
-  override def convertWithLog(from: MoneyY[EUR_XXX.type]): Logged[MoneyY[T]] = ???
-}
-
 case class PartialRateConverter[C, T <: C](to: T, rates: Map[C, BigDecimal]) extends Converter[MoneyY[C], MoneyY[T]] {
   def tToT(to: T): PartialFunction[MoneyY[C], Logged[MoneyY[T]]] = {
     case MoneyY(a, `to`) => MoneyY[T](a, to).pure[Logged] //m.asInstanceOf[MoneyY[T]] //THIS WAS A SAFE CAST

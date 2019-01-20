@@ -35,7 +35,10 @@ class MoneyXLawTests extends CatsSuite {
       Wallet.X.fromMoney(MoneyX(-10.0, XTS))
     ))
   } yield wallet)
-  implicit def cogenMoneyXMap: Cogen[Wallet[CurrencyX]] = Cogen[String].contramap(_.w.toVector.sortBy(_._1).toString)
+  implicit def cogenMoneyXMap: Cogen[Wallet[CurrencyX]] = Cogen[String].contramap { wallet =>
+    val vector = wallet.w.toVector.sortBy(_._1)
+    vector.toString
+  }
 
 
   checkAll("Currency", EqTests[CurrencyX].eqv)

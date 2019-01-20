@@ -1,6 +1,9 @@
 package app.fmgp.money
 
+import cats.instances.bigDecimal.catsKernelStdGroupForBigDecimal
+import cats.instances.map.catsKernelStdMonoidForMap
 import cats.kernel.Eq
+import cats.syntax.semigroup.catsSyntaxSemigroup
 
 sealed abstract case class MoneyY[+T](amount: BigDecimal, currency: T)
 
@@ -18,10 +21,6 @@ object MoneyK {
 }
 
 case class MoneyK[K](value: scala.collection.immutable.Map[K, BigDecimal]) extends AnyVal {
-
-  import cats.syntax.semigroup._
-  import cats.instances.bigDecimal._
-  import cats.instances.map._
 
   private def update(k: K, f: BigDecimal => BigDecimal) = value.updated(k, f(value.getOrElse(k, 0)))
   //def +(k: K, v: BigDecimal): MoneyK[K] =

@@ -58,8 +58,6 @@ object Money2Group {
     override def combine(x: Money2Map, y: Money2Map): Money2Map = Money2Map(x.w |+| y.w)
     override def empty: Money2Map = Money2Map(Map.empty)
 
-    import cats.instances.bigDecimal.catsKernelStdGroupForBigDecimal
-
     override def inverse(a: Money2Map): Money2Map = Money2Map(a.w.mapValues(e => catsKernelStdGroupForBigDecimal.inverse(e)))
     override def remove(a: Money2Map, b: Money2Map): Money2Map = super.remove(a, b)
   }

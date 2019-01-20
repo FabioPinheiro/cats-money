@@ -1,9 +1,9 @@
 package app.fmgp.money
 
-import app.fmgp.money.instances.all._
 import app.fmgp.money.CurrencyY._
+import app.fmgp.money.instances.all._
+import cats.instances.int.catsKernelStdGroupForInt
 import org.specs2.mutable._
-
 
 /** testOnly app.fmgp.money.MoneySpec */
 class MoneySpec extends Specification {
@@ -50,7 +50,6 @@ class MoneySpec extends Specification {
         }
       }
       "simplify" >> {
-        import cats.instances.int.catsKernelStdGroupForInt
         tInts3.simplify.collectValues must contain(5 + 4 + 3 + 2 + 1)
       }
     }

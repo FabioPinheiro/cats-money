@@ -3,17 +3,21 @@
 Scala functional library to deal amounts of money.
 The goal is to provide basic mathematical reasoning to work in money currency and exchange rate.
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9e9fffffdf4e45a7b6c99bb4939a0ce3)](https://app.codacy.com/app/fabiomgpinheiro/cats-money?utm_source=github.com&utm_medium=referral&utm_content=FabioPinheiro/cats-money&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://travis-ci.com/FabioPinheiro/cats-money.svg?branch=master)](https://travis-ci.com/FabioPinheiro/cats-money)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9e9fffffdf4e45a7b6c99bb4939a0ce3)](https://app.codacy.com/app/fabiomgpinheiro/cats-money?utm_source=github.com&utm_medium=referral&utm_content=FabioPinheiro/cats-money&utm_campaign=Badge_Grade_Dashboard)
 
-###### Power by cats & shapeless:
+##Power by cats & shapeless:
 
-![Cats Friendly Badge][cats-badge] & <img src="https://pbs.twimg.com/media/Ci-p9mmXAAAlPyx.jpg:small" width="80">
-
+![Cats Friendly Badge][cats-badge]
+&
+<img src="https://pbs.twimg.com/media/Ci-p9mmXAAAlPyx.jpg:small" width="80">
 
 ## Getting Started
 
 You will need to have Git, Java 8, and [SBT][sbt] installed.
+
+We try to have a similar structure to the cats library.
+Have a look of the [Cats Infographic][cats-infographic] from tpolecat.
 
 You can also start a *Scala console from in SBT* (`scala>` prompt)
 to play with small snippets of code:
@@ -33,14 +37,17 @@ import app.fmgp.money.CurrencyY._
 
 ### Adopters
 This is still only a draft and experimental library.
+But I plane to use this on the near future.
+If anyone else is also looking for a functional approach to work with monetary value, send me a messagem.
+(I would appreciate example use cases to better reflect over the library.)
 
 ### Maintainers
 The current maintainers (people who can merge pull requests) are:
 
- * *Fabio Pinheiro* - [BitBucket](https://bitbucket.org/FabioPinheiro/) / [GitHub](https://github.com/FabioPinheiro)
+  * *Fabio Pinheiro* - [BitBucket](https://bitbucket.org/FabioPinheiro/) / [GitHub](https://github.com/FabioPinheiro)
 
 #### TODO LIST
-  * implement: 
+  * implement:
     * Traverse\[MoneyTree\]
   * rename classes and draw a UML
     * rename MoneyY and CurrencyY
@@ -48,7 +55,7 @@ The current maintainers (people who can merge pull requests) are:
     * add all currencies from ISO-4217
     * create subset type of currencies
       * try [shapeless][shapeless] Union type
-        ```
+        ```scala
         type U = Union.`'a -> EUR, 'b -> USD`.T
         val u1 = Coproduct[U]('a ->> EUR)
         println("u1", u1)
@@ -56,7 +63,7 @@ The current maintainers (people who can merge pull requests) are:
       * try [Dotty Union Types](https://dotty.epfl.ch/docs/reference/union-types.html) =)
     * implement the rates conversion on a subset of currencies
       * try [shapeless][shapeless] polymorphic function
-        ```
+        ```scala
         object polymorphicF extends Poly1 {
           implicit def caseEUR = at[EUR.type](i => "sEUR")
           implicit def caseSUSD = at[USD.type](s => "sUSD")
@@ -66,15 +73,12 @@ The current maintainers (people who can merge pull requests) are:
         println("cu", cu, cu map polymorphicF)
         ```
   * *TESTS:*
-    * FIX: MoneyTree.monad.tailRecM stack safety *** FAILED *** */
-      * just need to store the structure when doing the loop (see code)
     * testing for non-compilation of type unsafe
       * [shapeless.test.illTyped][shapeless]
   * *DEMO:* (+- Done)
   * *TO TRY:*
     * Epimorphism, Monomorphism and Isomorphism
     * Rings
-
 
 ### Copyright and License
 
@@ -89,5 +93,4 @@ Copyright the Fabio Pinheiro, 2018.
 [book]: https://underscore.io/books/advanced-scala
 [sbt]: http://scala-sbt.org
 [scala-ide]: http://scala-ide.org
-[scala-metals]: https://scalameta.org/metals/
 [shapeless]: https://github.com/milessabin/shapeless

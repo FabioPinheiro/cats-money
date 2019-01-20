@@ -52,14 +52,6 @@ trait Currency {
   case object FJD extends CCC("FJD")
 }
 
-
-object EUR_XXX {
-  import shapeless.{:+:, CNil}
-  type CurencyList = CurrencyY.EUR.type :+: CurrencyY.XXX.type :+: CNil
-  import shapeless.union.Union
-  type Curency = Union.`'eur -> CurrencyY.EUR, 'usd -> CurrencyY.USD`.T
-}
-
 object Currency extends Currency {
 
   import shapeless._, record._, union._, syntax.singleton._

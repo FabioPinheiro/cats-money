@@ -23,8 +23,6 @@ object Money3CommutativeGroup {
     override def combine(x: Money3Map, y: Money3Map): Money3Map = Money3Map(x.w |+| y.w)
     override def empty: Money3Map = Money3Map(Map.empty)
 
-    import cats.instances.bigDecimal.catsKernelStdGroupForBigDecimal
-
     override def inverse(a: Money3Map): Money3Map = Money3Map(a.w.mapValues(e => catsKernelStdGroupForBigDecimal.inverse(e)))
   }
 }

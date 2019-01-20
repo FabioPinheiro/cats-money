@@ -1,15 +1,13 @@
 package app.fmgp.money
 
+import app.fmgp.money.CurrencyY._
 import cats.Id
 import cats.data.WriterT
 import cats.instances.vector._
 import cats.kernel.Monoid
 import cats.syntax.all._
-//import cats.syntax.applicative._
 
 object Demo extends App {
-
-  import app.fmgp.money.CurrencyY._
 
   val a = MoneyY(100, USD)
   val b = MoneyY(200, USD)
