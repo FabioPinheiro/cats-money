@@ -10,6 +10,7 @@ trait MoneyTreeInstances {
       case MoneyZBranch(value) => value.map(e => loop(e)).mkString("[", " + ", "]")
       case MoneyZLeaf(value) => showT.show(value)
     }
+
     loop(elem)
   })
   implicit val MoneyTreeFunctor: Functor[MoneyTree] = new MoneyTreeFunctor
@@ -51,31 +52,62 @@ class MoneyTreeMonad extends Monad[MoneyTree] {
       case MoneyZLeaf(v) => f(v)
     }
 
-  //TODO MoneyTree.monad.tailRecM stack safety *** FAILED *** */
-  override def tailRecM[A, B](x: A)(f: A => MoneyTree[Either[A, B]]): MoneyTree[B] =
-    flatMap(f(x)) {
-      case Left(value) => tailRecM(value)(f)
-      case Right(value) => MoneyZLeaf(value)
+  /**
+   * Stack Safety for Free implementation
+   * A
+   * B    C    D
+   * E   F       G
+   * H I
+   *
+   * ((E(HI))C(G)) <- all leafs
+   *
+   * A       .        | .
+   * BCD     33       | .
+   * EFCD    22 33    | .
+   * FCD     12 33    | E
+   * HICD    22 12 33 | E
+   * ICD     12 12 33 | HE
+   * CD      -2 12 33 | IHE
+   * CD      -2 33    | (HI)E
+   * CD      23       | (E(HI))
+   * D       13       | C(E(HI))
+   * G       11 13    | C(E(HI))
+   * .       -1 13    | GC(E(HI))
+   * .       -3       | (G)C(E(HI))
+   * .       .        | ((E(HI))C(G))
+   *
+   */
+  override def tailRecM[A, B](x: A)(f: A => MoneyTree[Either[A, B]]): MoneyTree[B] = {
+    //    flatMap(f(x)) {
+    //      case Left(value) => tailRecM(value)(f)
+    //      case Right(value) => MoneyZLeaf(value)
+    //    }
+    @scala.annotation.tailrec
+    def loop(
+      open: List[MoneyTree[Either[A, B]]],
+      closed: List[MoneyTree[B]],
+      state: List[(Int, Int)]
+    ): MoneyTree[B] = {
+      (open, state) match {
+        case (Nil, Nil) if closed.size == 1 => closed.head
+        case (MoneyZLeaf(Right(b)) :: Nil, Nil) => MoneyTree.one(b)
+
+        case (Nil, (0, _) :: Nil) => MoneyTree.branch(closed.reverse)
+        case (_, (0, t) :: (_s, _t) :: tail) =>
+          assert(closed.size >= t)
+          loop(open, MoneyZBranch(closed.take(t).reverse) :: closed.drop(t), (_s - 1, _t) :: tail)
+        case (MoneyZLeaf(Left(a)) :: next, _) =>
+          loop(f(a) :: next, closed, state)
+        case (MoneyZLeaf(Right(b)) :: next, (s, t) :: stateTail) =>
+          loop(next, MoneyTree.one(b) :: closed, (s - 1, t) :: stateTail)
+        case (MoneyZBranch(Nil) :: next, (_s, _t) :: stateTail) =>
+          loop(next, MoneyTree.empty :: closed, (_s - 1, _t) :: stateTail)
+        case (MoneyZBranch(seq) :: next, _state) =>
+          loop(seq.toList ++ next, closed, (seq.size, seq.size) :: _state)
+      }
     }
 
-  //override def tailRecM[A, B](x: A)(f: A => MoneyTree[Either[A, B]]): MoneyTree[B] = {
-  //  @scala.annotation.tailrec
-  //  def loop(
-  //    open: List[MoneyTree[Either[A, B]]],
-  //    closed: List[Option[MoneyTree[B]]] //, structure
-  //  ): List[MoneyTree[B]] = open match {
-  //    case MoneyZBranch(seq) :: next => loop(seq.toList ++ next, closed) //TODO need to store the structure
-  //    case MoneyZLeaf(Left(a)) :: next => loop(f(a) :: next, closed)
-  //    case MoneyZLeaf(Right(b)) :: next => loop(next, Some(pure(b)) :: closed)
-  //    case Nil =>
-  //      closed.foldLeft(Nil: List[MoneyTree[B]]) { (acc, maybeTree) =>
-  //        maybeTree.map(_ :: acc).getOrElse {
-  //          val fffff :: tail = acc
-  //          MoneyZBranch(Seq(fffff)) :: tail //FAIL !!!! and now???
-  //        }
-  //      }
-  //  }
-  //  loop(List(f(x)), Nil).head
-  //}
+    loop(List(f(x)), Nil, List.empty)
+  }
 }
 

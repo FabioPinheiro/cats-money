@@ -54,6 +54,34 @@ class MoneySpec extends Specification {
         tInts3.simplify.collectValues must contain(5 + 4 + 3 + 2 + 1)
       }
     }
+    "have a working tailRecM method" >> {
+      "just one left" >> {
+        val ret = MoneyTreeMonad.tailRecM("nada")(_ => MoneyTree.one(Right(MoneyY(1, EUR))))
+        ret must be_===(MoneyTree.one(MoneyY(1, EUR)))
+      }
+      "just an empty tree" >> {
+        val ret = MoneyTreeMonad.tailRecM("nada")(_ => MoneyTree.empty)
+        ret must be_===(MoneyTree.empty)
+      }
+      "tree with a left" >> {
+        val ret = MoneyTreeMonad.tailRecM("nada")(_ => MoneyTree.branch(Seq(MoneyTree.one(Right(MoneyY(1, EUR))))))
+        ret must be_===(MoneyTree.branch(Seq(MoneyTree.one(MoneyY(1, EUR)))))
+      }
+      "tree inside a tree" >> {
+        val ret = MoneyTreeMonad.tailRecM("nada")(_ => MoneyTree.branch(Seq(MoneyTree.branch(Seq()))))
+        ret must be_===(MoneyTree.branch(Seq(MoneyTree.empty)))
+      }
+      val m1 = MoneyTree.one(Right(MoneyY(1, EUR)))
+      val m2 = MoneyTree.one(Right(MoneyY(2, EUR)))
+      "tree with two lefts" >> {
+        val ret = MoneyTreeMonad.tailRecM("nada")(_ => MoneyTree.branch(Seq(m1, m2)))
+        ret must be_===(MoneyTree.branch(Seq(MoneyTree.one(MoneyY(1, EUR)), MoneyTree.one(MoneyY(2, EUR)))))
+      }
+      "tree with a other tree and a left" >> {
+        val ret = MoneyTreeMonad.tailRecM("nada")(_ => MoneyTree.branch(Seq(MoneyTree.branch(Seq(m1)), m2)))
+        ret must be_===(MoneyTree.branch(Seq(MoneyTree.branch(Seq(MoneyTree.one(MoneyY(1, EUR)))), MoneyTree.one(MoneyY(2, EUR)))))
+      }
+    }
   }
   "Collector" >> {
     "Unsafe collector" >> {
@@ -108,7 +136,7 @@ class MoneySpec extends Specification {
       }
       "throw an MatchError because of missing Match" >> {
         println(MoneyTreeMonad.map(t4)(e => c2.isDefinedAt(e)))
-        println( MoneyTreeFunctor.map(t4)(e => c2.isDefinedAt(e)))
+        println(MoneyTreeFunctor.map(t4)(e => c2.isDefinedAt(e)))
         MoneyTreeMonad.map(t4)(e => c2(e)) must throwAn[scala.MatchError]
         MoneyTreeFunctor.map(t4)(e => c2(e)) must throwAn[scala.MatchError]
       }
