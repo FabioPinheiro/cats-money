@@ -7,6 +7,7 @@ import cats.instances.vector._
 import cats.kernel.Monoid
 import cats.syntax.all._
 
+/** test:runMain app.fmgp.money.Demo */
 object Demo extends App {
 
   val a = MoneyY(100, USD)

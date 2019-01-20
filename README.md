@@ -7,7 +7,7 @@ The goal is to provide basic mathematical reasoning to work in money currency an
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/9e9fffffdf4e45a7b6c99bb4939a0ce3)](https://app.codacy.com/app/fabiomgpinheiro/cats-money?utm_source=github.com&utm_medium=referral&utm_content=FabioPinheiro/cats-money&utm_campaign=Badge_Grade_Dashboard)
 [![Codacy Badge](https://api.codacy.com/project/badge/Coverage/05e27a1b2c8e4f0a88183150ce3e9416)](https://www.codacy.com/app/fabiomgpinheiro/cats-money?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=FabioPinheiro/cats-money&amp;utm_campaign=Badge_Coverage)
 
-##Power by cats & shapeless:
+## Power by cats & shapeless:
 
 ![Cats Friendly Badge][cats-badge]
 &
@@ -18,23 +18,25 @@ The goal is to provide basic mathematical reasoning to work in money currency an
 You will need to have Git, Java 8, and [SBT][sbt] installed.
 
 We try to have a similar structure to the cats library.
-Have a look of the [Cats Infographic][cats-infographic] from tpolecat.
+Have a look of the [Cats Infographic][cats-infographic] from tpolecat
+and to the [Underscore's Scala Book][underscore-scala-book].
 
 You can also start a *Scala console from in SBT* (`scala>` prompt)
 to play with small snippets of code:
 
-```
+```scala
 import cats._, implicits._
 import shapeless._, record._, union._, syntax.singleton._
+import app.fmgp.money.instances.all._
 
 import app.fmgp.money._
 import app.fmgp.money.MoneyY._
-import app.fmgp.money.MoneyYMonoid._
-import app.fmgp.money.Wallet._
-import app.fmgp.money.Wallet.Y._
 import app.fmgp.money.CurrencyY._
 ```
 
+Have a look on the to *Demos* for more examples (on the test folder):
+* `sbt "test:runMain app.fmgp.money.Demo"`
+* `sbt "test:runMain app.fmgp.money.Main"`
 
 ### Adopters
 This is still only a draft and experimental library.
@@ -78,7 +80,7 @@ The current maintainers (people who can merge pull requests) are:
     * [shapeless.test.illTyped][shapeless]
   * [X] Add a code coverage tool (sbt-scoverage)
 * demo:
-  * [ ] (+- Done) Demo Main
+  * [X] (+- Done) Demo Main
 * to try:
   * [ ] Epimorphism, Monomorphism and Isomorphism
   * [X] Rings +-
@@ -86,14 +88,13 @@ The current maintainers (people who can merge pull requests) are:
 ### Copyright and License
 
 cats-money is licensed under the MIT license, available at
-http://opensource.org/licenses/mit-license.php and also in the
-[LICENSE](LICENSE) file.
+[http://opensource.org/licenses/mit-license.php](http://opensource.org/licenses/mit-license.php)
+and also in the [LICENSE](LICENSE) file.
 
 Copyright the Fabio Pinheiro, 2018.
 
 [cats-badge]: https://typelevel.org/cats/img/cats-badge-tiny.png
 [cats-infographic]: https://github.com/tpolecat/cats-infographic
-[book]: https://underscore.io/books/advanced-scala
+[underscore-scala-book]: https://underscore.io/books/advanced-scala
 [sbt]: http://scala-sbt.org
-[scala-ide]: http://scala-ide.org
 [shapeless]: https://github.com/milessabin/shapeless

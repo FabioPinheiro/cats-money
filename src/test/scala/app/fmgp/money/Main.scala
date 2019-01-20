@@ -4,8 +4,9 @@ import app.fmgp.money.CurrencyY._
 import app.fmgp.money.instances.MoneyInstances.{MoneyZWithTag, ring}
 import app.fmgp.money.instances.all._
 import cats.syntax.all._
-import shapeless._, record._, union._, syntax.singleton._
+import shapeless._
 
+/** test:runMain app.fmgp.money.Main */
 object Main extends App {
 
 
