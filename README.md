@@ -3,6 +3,7 @@
 Scala functional library to deal amounts of money.
 The goal is to provide basic mathematical reasoning to work in money currency and exchange rate.
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9e9fffffdf4e45a7b6c99bb4939a0ce3)](https://app.codacy.com/app/fabiomgpinheiro/cats-money?utm_source=github.com&utm_medium=referral&utm_content=FabioPinheiro/cats-money&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://travis-ci.com/FabioPinheiro/cats-money.svg?branch=master)](https://travis-ci.com/FabioPinheiro/cats-money)
 
 ###### Power by cats & shapeless:
