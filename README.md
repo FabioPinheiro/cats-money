@@ -13,8 +13,18 @@ The goal is to provide basic mathematical reasoning to work in money currency an
 &
 <img src="https://pbs.twimg.com/media/Ci-p9mmXAAAlPyx.jpg:small" width="80">
 
-## Getting Started
+## Getting Started with Gitpod
 
+[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/FabioPinheiro/cats-money)
+
+To use the online IDE dondload and install the Visual Studio plugins from the marketplace:
+* Scala - https://marketplace.visualstudio.com/items?itemName=scala-lang.scala
+* Metals - https://marketplace.visualstudio.com/items?itemName=scalameta.metals
+
+To compile and run you can install scala and sbt: `sdk install scala` & `sdk install sbt`
+
+
+## Getting Started locally
 You will need to have Git, Java 8, and [SBT][sbt] installed.
 
 We try to have a similar structure to the cats library.
