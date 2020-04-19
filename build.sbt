@@ -27,7 +27,7 @@ lazy val root = project
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test",
     libraryDependencies ++= Seq(
       ("org.typelevel" %% "cats-core" % "2.2.0-M1").withDottyCompat(scalaVersion.value),
-      ("com.chuusai" %% "shapeless" % "2.4.0-M1").withDottyCompat(scalaVersion.value), //v2.4.0-M1
+      //("com.chuusai" %% "shapeless" % "2.4.0-M1").withDottyCompat(scalaVersion.value), //v2.4.0-M1
       // ("org.typelevel" %% "cats-laws" % "1.5.0" % Test).withDottyCompat(scalaVersion.value), //or `cats-testkit` if you are using ScalaTest
       // ("org.typelevel" %% "cats-testkit" % "1.5.0" % Test).withDottyCompat(scalaVersion.value),
       // ("com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % "1.2.0" % Test).withDottyCompat(scalaVersion.value),

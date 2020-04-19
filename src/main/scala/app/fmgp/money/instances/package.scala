@@ -12,6 +12,4 @@ package object instances {
     object money extends MoneyInstancesC[C]
     object moneyTree extends MoneyTreeInstances
   }
-
-  object CY extends InstancesForCurrency[app.fmgp.money.CurrencyY.CY]
 }
