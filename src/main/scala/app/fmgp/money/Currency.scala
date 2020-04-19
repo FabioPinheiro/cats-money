@@ -17,28 +17,29 @@ object CurrencyY {
   case object EUR extends CY("EUR") //
 
   //TODO We can use shapeless to do this ... (But I need to learn it fist! XD)
-  implicit def companionXXX = new Companion[XXX.type] {
-    type C = XXX.type;
+
+  given companionXXX as Companion [XXX.type] {
+    type C = XXX.type
     def apply() = XXX
   }
-  implicit def companionXTS = new Companion[XTS.type] {
-    type C = XTS.type;
+  given companionXTS as Companion [XTS.type] {
+    type C = XTS.type
     def apply() = XTS
   }
-  implicit def companionUSD = new Companion[USD.type] {
-    type C = USD.type;
+  given companionUSD as Companion [USD.type] {
+    type C = USD.type
     def apply() = USD
   }
-  implicit def companionXAU = new Companion[XAU.type] {
-    type C = XAU.type;
+  given companionXAU as Companion [XAU.type] {
+    type C = XAU.type
     def apply() = XAU
   }
-  implicit def companionGBP = new Companion[GBP.type] {
-    type C = GBP.type;
+  given companionGBP as Companion [GBP.type] {
+    type C = GBP.type
     def apply() = GBP
   }
-  implicit def companionEUR = new Companion[EUR.type] {
-    type C = EUR.type;
+  given companionEUR as Companion [EUR.type] {
+    type C = EUR.type
     def apply() = EUR
   }
 }
@@ -67,11 +68,11 @@ trait Currency {
 }
 
 /**
- * Currency uses the shapeless
- */
+  * Currency uses the shapeless
+  */
 object Currency extends Currency {
 
-  val xpto = Generic[CCC]
+  //FIXME val xpto = Generic[CCC]
   type AUX = EUR.type :+: GBP.type :+: USD.type :+: CNil
 
   def createCompanion[A](func: A => A): Companion[A] =
@@ -80,8 +81,8 @@ object Currency extends Currency {
       override def apply(): A = func(GBP.asInstanceOf[A]) //FIXME
     }
 
-  implicit def companion = new Companion[USD.type] {
-    type C = USD.type;
+  given companion as Companion [USD.type] {
+    type C = USD.type
     def apply() = USD
   }
 
@@ -98,7 +99,7 @@ object Currency extends Currency {
       override def apply(): C = Nil
     }
   }
-  */
+   */
   //
   //  implicit def coproductCompanion[H, T <: Coproduct](
   //    implicit
@@ -109,13 +110,13 @@ object Currency extends Currency {
   //    case Inr(t) => tCompanion(t)
   //  }
 
-  def test = {
-    print("Currency TEST")
-    val a = xpto.to(USD)
-    val b = xpto.to(AED)
-    println(a)
-    println(b)
-    //val c = xpto.from(CNil)
-    //println(c)
-  }
+  //FIXME def test = {
+  //   print("Currency TEST")
+  //   val a = xpto.to(USD)
+  //   val b = xpto.to(AED)
+  //   println(a)
+  //   println(b)
+  //   //val c = xpto.from(CNil)
+  //   //println(c)
+  // }
 }

@@ -10,7 +10,7 @@ scalacOptions ++= Seq(
   "-deprecation", // warn about use of deprecated APIs
   "-unchecked", // warn about unchecked type parameters
   "-feature", // warn about misused language features
-  "-language:higherKinds", // allow higher kinded types without `import scala.language.higherKinds`
+  "-language:higherKinds,implicitConversions" // allow higher kinded types without `import scala.language.higherKinds`
   //"-Xlint",               // enable handy linter warnings
   //"-Xfatal-warnings",     // turn compiler warnings into errors
   // "-Ypartial-unification", // allow the compiler to unify type constructors of different arities
@@ -27,11 +27,11 @@ lazy val root = project
     libraryDependencies += "com.novocode" % "junit-interface" % "0.11" % "test",
     libraryDependencies ++= Seq(
       ("org.typelevel" %% "cats-core" % "2.2.0-M1").withDottyCompat(scalaVersion.value),
-      ("com.chuusai" %% "shapeless" % "2.3.3").withDottyCompat(scalaVersion.value),
-      // "org.typelevel" %% "cats-laws" % "1.5.0" % Test, //or `cats-testkit` if you are using ScalaTest
-      // "org.typelevel" %% "cats-testkit" % "1.5.0" % Test,
-      // "com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % "1.2.0" % Test,
-      // "org.specs2" %% "specs2-core" % "4.3.4" % Test
+      ("com.chuusai" %% "shapeless" % "2.4.0-M1").withDottyCompat(scalaVersion.value), //v2.4.0-M1
+      // ("org.typelevel" %% "cats-laws" % "1.5.0" % Test).withDottyCompat(scalaVersion.value), //or `cats-testkit` if you are using ScalaTest
+      // ("org.typelevel" %% "cats-testkit" % "1.5.0" % Test).withDottyCompat(scalaVersion.value),
+      // ("com.github.alexarchambault" %% "scalacheck-shapeless_1.14" % "1.2.0" % Test).withDottyCompat(scalaVersion.value),
+      // ("org.specs2" %% "specs2-core" % "4.3.4" % Test).withDottyCompat(scalaVersion.value),
     ),
     // To make the default compiler and REPL use Dotty
     scalaVersion := dottyVersion,

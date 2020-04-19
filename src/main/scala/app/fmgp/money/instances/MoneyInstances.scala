@@ -18,7 +18,9 @@ object MoneyInstances {
 
 trait MoneyInstances {
   //### MoneyY ###
-  implicit def moneyYShow[T]: Show[MoneyY[T]] = Show.show(money => money.amount + " " + money.currency)
+  given moneyYShow [T] (using sss: Show[T]) as Show[MoneyY[T]] {
+    def show(money: MoneyY[T]) = "" + money.amount + " " + sss.show(money.currency)
+  }
   implicit def moneyYMonoidT[T](c: T): Monoid[MoneyY[T]] = new MoneyYMonoid[T](c)
 
   //### MoneyZ ###
@@ -26,10 +28,13 @@ trait MoneyInstances {
   implicit class MoneyZWithCompanion[T](value: MoneyZ[T]) {
     def currency(implicit companion: Companion[T]) = companion.apply()
   }
-  implicit def moneyZShow[T](implicit /*showT: Show[T],*/ companionT: Companion[T]): Show[MoneyZ[T]] =
-    Show.show(money => money.amount + " " + money.currency)
-  implicit def moneyZShowWithTag[T](implicit /*showT: Show[T],*/ companionT: Companion[T]): Show[MoneyZWithTag[T]] =
-    Show.show(money => money.amount + " TAGGED-" + money.currency)
+
+  given moneyZShow [T] (using companionT: Companion[T]) as Show[MoneyZ[T]] {
+    def show(money: MoneyZ[T]) = "" + money.amount + " " + money.currency
+  }
+  given moneyZShowWithTag [T] (using companionT: Companion[T]) as Show[MoneyZWithTag[T]] {
+    def show(money: MoneyZWithTag[T]) = "" + money.amount + " TAGGED-" + money.currency
+  }
   implicit def moneyZMonoidK[T]: MonoidK[MoneyZ] = new MoneyZMonoidK
   implicit def moneyZMonoidKMultiplication[T]: MonoidK[MoneyZWithTag] = new MoneyZMonoidKWithTag
 
@@ -57,7 +62,8 @@ class MoneyZMonoidK extends MonoidK[MoneyZ] {
 
 class MoneyZMonoidKWithTag extends MonoidK[MoneyZWithTag] {
   override def empty[A]: MoneyZWithTag[A] = MoneyZ[A](0).asInstanceOf[MoneyZWithTag[A]]
-  override def combineK[A](x: MoneyZWithTag[A], y: MoneyZWithTag[A]): MoneyZWithTag[A] = MoneyZ[A](x.amount * y.amount).asInstanceOf[MoneyZWithTag[A]]
+  override def combineK[A](x: MoneyZWithTag[A], y: MoneyZWithTag[A]): MoneyZWithTag[A] =
+    MoneyZ[A](x.amount * y.amount).asInstanceOf[MoneyZWithTag[A]]
 }
 
 class MoneyKMonoidK extends MonoidK[MoneyK] {
@@ -69,16 +75,17 @@ class MoneyKMonoidK extends MonoidK[MoneyK] {
 
 trait MoneyInstancesC[CURRENCY] extends MoneyInstances {
   //### MoneyY ###
-  implicit def monoidMoneyCWithPartialCollector[C <: CURRENCY](c: C, rc: PartialRateConverter[CURRENCY, C]): Monoid[MoneyY[CURRENCY]] = new MoneyMonoidC(c, rc)
+  implicit def monoidMoneyCWithPartialCollector[C <: CURRENCY](
+      c: C,
+      rc: PartialRateConverter[CURRENCY, C]
+  ): Monoid[MoneyY[CURRENCY]] = new MoneyMonoidC(c, rc)
   implicit def moneyOrder[C <: CURRENCY]: Order[MoneyY[C]] = new MoneyYOrder[CURRENCY, C]
 }
 
-class MoneyMonoidC[CURRENCY, C <: CURRENCY](c: C, partialRateConverter: PartialRateConverter[CURRENCY, C]) extends Monoid[MoneyY[CURRENCY]] {
+class MoneyMonoidC[CURRENCY, C <: CURRENCY](c: C, partialRateConverter: PartialRateConverter[CURRENCY, C])
+    extends Monoid[MoneyY[CURRENCY]] {
   implicit val monoidOfManeyC: MoneyYMonoid[CURRENCY] = new MoneyYMonoid[CURRENCY](c)
   override def combine(x: MoneyY[CURRENCY], y: MoneyY[CURRENCY]): MoneyY[CURRENCY] =
     monoidOfManeyC.combine(partialRateConverter.convert(x), partialRateConverter.convert(y))
   override def empty: MoneyY[CURRENCY] = MoneyY[CURRENCY](0, c)
 }
-
-
-
