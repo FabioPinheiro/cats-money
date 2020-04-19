@@ -73,7 +73,7 @@ The current maintainers (people who can merge pull requests) are:
       val u1 = Coproduct[U]('a ->> EUR)
       println("u1", u1)
       ```
-    * [ ] try [Dotty Union Types](https://dotty.epfl.ch/docs/reference/union-types.html) =)
+    * [WIP] try [Dotty Union Types](https://dotty.epfl.ch/docs/reference/union-types.html) =)
   * implement the rates conversion on a subset of currencies
     * [ ] try [shapeless][shapeless] polymorphic function
       ```scala
@@ -101,7 +101,7 @@ cats-money is licensed under the MIT license, available at
 [http://opensource.org/licenses/mit-license.php](http://opensource.org/licenses/mit-license.php)
 and also in the [LICENSE](LICENSE) file.
 
-Copyright the Fabio Pinheiro, 2019.
+Copyright the Fabio Pinheiro, 2020.
 
 [cats-badge]: https://typelevel.org/cats/img/cats-badge-tiny.png
 [cats-infographic]: https://github.com/tpolecat/cats-infographic

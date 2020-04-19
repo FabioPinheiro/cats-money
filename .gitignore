@@ -29,4 +29,4 @@ platform.iml
 # scala metals specific
 .metals
 .bloop
-
+project/metals.sbt
