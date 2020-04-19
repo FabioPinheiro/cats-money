@@ -31,6 +31,7 @@ object Currency extends Currency {
 
   type AUX = CCC.EUR.type | CCC.GBP.type | CCC.USD.type
 
+
   def createCompanion[A](func: A => A): Companion[A] =
     new Companion[A] {
       override type C = A

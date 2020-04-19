@@ -82,9 +82,14 @@ trait MoneyInstancesC[CURRENCY] extends MoneyInstances {
   implicit def moneyOrder[C <: CURRENCY]: Order[MoneyY[C]] = new MoneyYOrder[CURRENCY, C]
 }
 
-class MoneyMonoidC[CURRENCY, C <: CURRENCY](c: C, partialRateConverter: PartialRateConverter[CURRENCY, C])
-    extends Monoid[MoneyY[CURRENCY]] {
-  implicit val monoidOfManeyC: MoneyYMonoid[CURRENCY] = new MoneyYMonoid[CURRENCY](c)
+class MoneyMonoidC[CURRENCY, C <: CURRENCY](
+    c: C,
+    partialRateConverter: PartialRateConverter[CURRENCY, C]
+) extends Monoid[MoneyY[CURRENCY]] {
+
+  lazy val monoidOfManeyC: MoneyYMonoid[CURRENCY] = new MoneyYMonoid[CURRENCY](c)
+  given MoneyYMonoid[CURRENCY] = monoidOfManeyC
+
   override def combine(x: MoneyY[CURRENCY], y: MoneyY[CURRENCY]): MoneyY[CURRENCY] =
     monoidOfManeyC.combine(partialRateConverter.convert(x), partialRateConverter.convert(y))
   override def empty: MoneyY[CURRENCY] = MoneyY[CURRENCY](0, c)

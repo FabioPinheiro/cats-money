@@ -11,6 +11,10 @@ trait Converter[-FROM, TO] {
   def convertWithLog(from: FROM): Logged[TO]
 }
 
+/**
+  * C is supose to be a union type
+  * Try to use https://dotty.epfl.ch/docs/reference/new-types/match-types.html
+  */
 case class PartialRateConverter[C, T <: C](to: T, rates: Map[C, BigDecimal]) extends Converter[MoneyY[C], MoneyY[T]] {
   def tToT(to: T): PartialFunction[MoneyY[C], Logged[MoneyY[T]]] = {
     case MoneyY(a, `to`) => MoneyY[T](a, to).pure[Logged] //m.asInstanceOf[MoneyY[T]] //THIS WAS A SAFE CAST
@@ -19,7 +23,8 @@ case class PartialRateConverter[C, T <: C](to: T, rates: Map[C, BigDecimal]) ext
     val ii = rates.filterNot(_._1 == to).map {
       case (from, rate) =>
         val pf: PartialFunction[MoneyY[C], Logged[MoneyY[T]]] = {
-          case MoneyY(amount, `from`) => MoneyY[T](amount * rate, to).writer(Vector(s"$amount$from($rate)->${amount * rate}$to"))
+          case MoneyY(amount, `from`) =>
+            MoneyY[T](amount * rate, to).writer(Vector(s"$amount$from($rate)->${amount * rate}$to"))
         }
         pf
     }
