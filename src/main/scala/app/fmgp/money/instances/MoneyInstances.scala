@@ -1,7 +1,7 @@
 package app.fmgp.money.instances
 
 import app.fmgp.money._
-import app.fmgp.money.instances.MoneyInstances.MoneyZWithTag
+//import app.fmgp.money.instances.MoneyInstances.MoneyZWithTag
 import cats.{MonoidK, Show}
 import cats.kernel.{Monoid, Order}
 import cats.syntax.monoid._
@@ -11,9 +11,9 @@ import scala.language.implicitConversions
 
 object MoneyInstances {
   trait MyTag
-  type MoneyZWithTag[A] = MoneyZ[A] with MyTag
-  def ring[A](x: MoneyZ[A]): MoneyZWithTag[A] = x.asInstanceOf[MoneyZWithTag[A]]
-  def ring[A](c: A, x: BigDecimal): MoneyZWithTag[A] = MoneyZ[A](x).asInstanceOf[MoneyZWithTag[A]]
+  //type MoneyZWithTag[A] = MoneyZ[A] with MyTag
+  //def ring[A](x: MoneyZ[A]): MoneyZWithTag[A] = x.asInstanceOf[MoneyZWithTag[A]]
+  //def ring[A](c: A, x: BigDecimal): MoneyZWithTag[A] = MoneyZ[A](x).asInstanceOf[MoneyZWithTag[A]]
 }
 
 trait MoneyInstances {
@@ -25,21 +25,21 @@ trait MoneyInstances {
 
   //### MoneyZ ###
   /** Add a new method currency */
-  implicit class MoneyZWithCompanion[T](value: MoneyZ[T]) {
-    def currency(implicit companion: Companion[T]) = companion.apply()
-  }
+  // implicit class MoneyZWithCompanion[T](value: MoneyZ[T]) {
+  //   def currency(implicit companion: Companion[T]) = companion.apply()
+  // }
 
-  given moneyZShow [T] (using companionT: Companion[T]) as Show[MoneyZ[T]] {
-    def show(money: MoneyZ[T]) = "" + money.amount + " " + money.currency
-  }
-  given moneyZShowWithTag [T] (using companionT: Companion[T]) as Show[MoneyZWithTag[T]] {
-    def show(money: MoneyZWithTag[T]) = "" + money.amount + " TAGGED-" + money.currency
-  }
-  implicit def moneyZMonoidK[T]: MonoidK[MoneyZ] = new MoneyZMonoidK
-  implicit def moneyZMonoidKMultiplication[T]: MonoidK[MoneyZWithTag] = new MoneyZMonoidKWithTag
+  // given moneyZShow [T] (using companionT: Companion[T]) as Show[MoneyZ[T]] {
+  //   def show(money: MoneyZ[T]) = "" + money.amount + " " + money.currency
+  // }
+  // given moneyZShowWithTag [T] (using companionT: Companion[T]) as Show[MoneyZWithTag[T]] {
+  //   def show(money: MoneyZWithTag[T]) = "" + money.amount + " TAGGED-" + money.currency
+  // }
+  // implicit def moneyZMonoidK[T]: MonoidK[MoneyZ] = new MoneyZMonoidK
+  // implicit def moneyZMonoidKMultiplication[T]: MonoidK[MoneyZWithTag] = new MoneyZMonoidKWithTag
 
   //### MoneyK ###
-  implicit def moneyKMonoidK[K]: MonoidK[MoneyK] = new MoneyKMonoidK
+  // implicit def moneyKMonoidK[K]: MonoidK[MoneyK] = new MoneyKMonoidK
 }
 
 class MoneyYOrder[T, C <: T] extends Order[MoneyY[C]] {
@@ -55,21 +55,21 @@ class MoneyYMonoid[C](c: C) extends Monoid[MoneyY[C]] {
   override def empty: MoneyY[C] = MoneyY[C](0, c)
 }
 
-class MoneyZMonoidK extends MonoidK[MoneyZ] {
-  override def empty[A]: MoneyZ[A] = MoneyZ[A](0)
-  override def combineK[A](x: MoneyZ[A], y: MoneyZ[A]): MoneyZ[A] = MoneyZ[A](x.amount |+| y.amount)
-}
+// class MoneyZMonoidK extends MonoidK[MoneyZ] {
+//   override def empty[A]: MoneyZ[A] = MoneyZ[A](0)
+//   override def combineK[A](x: MoneyZ[A], y: MoneyZ[A]): MoneyZ[A] = MoneyZ[A](x.amount |+| y.amount)
+// }
 
-class MoneyZMonoidKWithTag extends MonoidK[MoneyZWithTag] {
-  override def empty[A]: MoneyZWithTag[A] = MoneyZ[A](0).asInstanceOf[MoneyZWithTag[A]]
-  override def combineK[A](x: MoneyZWithTag[A], y: MoneyZWithTag[A]): MoneyZWithTag[A] =
-    MoneyZ[A](x.amount * y.amount).asInstanceOf[MoneyZWithTag[A]]
-}
+// class MoneyZMonoidKWithTag extends MonoidK[MoneyZWithTag] {
+//   override def empty[A]: MoneyZWithTag[A] = MoneyZ[A](0).asInstanceOf[MoneyZWithTag[A]]
+//   override def combineK[A](x: MoneyZWithTag[A], y: MoneyZWithTag[A]): MoneyZWithTag[A] =
+//     MoneyZ[A](x.amount * y.amount).asInstanceOf[MoneyZWithTag[A]]
+// }
 
-class MoneyKMonoidK extends MonoidK[MoneyK] {
-  override def empty[K]: MoneyK[K] = MoneyK[K](Map())
-  override def combineK[K](x: MoneyK[K], y: MoneyK[K]): MoneyK[K] = x ++ y
-}
+// class MoneyKMonoidK extends MonoidK[MoneyK] {
+//   override def empty[K]: MoneyK[K] = MoneyK[K](Map())
+//   override def combineK[K](x: MoneyK[K], y: MoneyK[K]): MoneyK[K] = x ++ y
+// }
 
 // With CURRENCY
 
