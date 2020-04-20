@@ -7,27 +7,10 @@ object all extends MoneyInstances with MoneyTreeInstances
 //object all extends MoneyTreeInstances
 object Demo extends App {
 
-  enum CCC { //abstract sealed class CCC(name: String)
-  //case AED 
-  //case AUD 
-  //case BWP 
-  //case CAD 
-  //case CHF 
-  
+  enum CCC {
   case EUR 
   case GBP 
- 
-  // case JPY  //was not minor type *1
-  // case LYD  //Minor type *1000
-  // case MAD 
-  // case MUR 
-  // case NAD 
-  // case NZD 
-  // case OMR 
-  // case THB 
   case USD 
-  // case ZAR 
-  // case FJD 
   }
 
   type AUX = CCC.EUR.type | CCC.GBP.type | CCC.USD.type
