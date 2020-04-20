@@ -13,17 +13,45 @@ object MoneyY {
   implicit def eqv[T]: Eq[MoneyY[T]] = Eq.fromUniversalEquals
 }
 
-// case class MoneyZ[T](amount: BigDecimal) //This must be invariant in type T to correctly support monoidK
+import app.fmgp.money.MoneyTree
+import cats.{Applicative, Eval, Functor, Monad, Show, Traverse}
 
-// object MoneyK {
-//   def empty[K] = MoneyK[K](Map())
-//   implicit def eqv[K]: Eq[MoneyK[K]] = Eq.fromUniversalEquals
-// }
+import cats.Monad
+import cats.data.Writer
+import cats.kernel.{Eq, Monoid}
 
-// case class MoneyK[K](value: scala.collection.immutable.Map[K, BigDecimal]) extends AnyVal {
+sealed abstract class MoneyTree[+T] {
+  def collapse: MoneyTree[T]
+  def collectValues: Seq[T]
+  def simplify[S >: T](implicit monoid: Monoid[S]): MoneyTree[S] =
+    MoneyTree.leafs[S](monoid.combineAll(this.collectValues: TraversableOnce[T]))
+  def :+[S >: T](a: S): MoneyTree[S] = ???
+}
 
-//   private def update(k: K, f: BigDecimal => BigDecimal) = value.updated(k, f(value.getOrElse(k, 0)))
-//   //def +(k: K, v: BigDecimal): MoneyK[K] =
-//   def +(k: K, v: BigDecimal): MoneyK[K] = MoneyK[K](value |+| Map(k -> v)) //MoneyK[K](update(k, _ + v))
-//   def ++(other: MoneyK[K]): MoneyK[K] = MoneyK[K](value |+| other.value)
+object MoneyTree {
+  def empty[T]: MoneyTree[T] = ??? //MoneyZBranch[T](Seq.empty)
+  def one[T](value: T): MoneyTree[T] = ??? //MoneyZLeaf[T](value)
+  def branch[T](m: Seq[MoneyTree[T]]): MoneyTree[T] = ??? ///MoneyZBranch[T](m)
+  def join[T](m: MoneyTree[T]*): MoneyTree[T] = ??? ///MoneyZBranch[T](m)
+  def leafs[T](m: T*): MoneyTree[T] = ??? ///MoneyZBranch[T](m.map(one))
+
+  implicit def eqTree[T: Eq]: Eq[MoneyTree[T]] = ??? //Eq.fromUniversalEquals
+}
+
+object MoneyTreeInstances {
+  implicit def MoneyTreeShow[T](implicit showT: Show[T]): Show[MoneyTree[T]] = ???
+  implicit val MoneyTreeFunctor: Functor[MoneyTree] = ???
+  implicit val MoneyTreeMonad: Monad[MoneyTree] = ???
+  val MoneyTreeTraverse: Traverse[MoneyTree] = ???
+}
+
+// object Demo extends App {
+//   import MoneyTreeInstances._
+//   val a = MoneyY(100, Int)
+//   val b = MoneyY(200, String)
+
+//   type SomeUnionType = Int | Unit
+//   //FIXME
+//   val maybeBug: MoneyTree[MoneyY[SomeUnionType]] = (a: SomeUnionType).pure[MoneyTree] :+ b // :+ c :+ d
+
 // }
