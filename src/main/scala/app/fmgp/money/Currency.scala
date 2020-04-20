@@ -1,29 +1,31 @@
 package app.fmgp.money
 
-import cats.kernel.Eq
+//import cats.kernel.Eq
 //import shapeless._, record._, union._, syntax.singleton._
 
 //TODO ... ISO-4217
 trait Currency {
   enum CCC { //abstract sealed class CCC(name: String)
-  case AED 
-  case AUD 
-  case BWP 
-  case CAD 
-  case CHF 
+  //case AED 
+  //case AUD 
+  //case BWP 
+  //case CAD 
+  //case CHF 
+  
   case EUR 
   case GBP 
-  case JPY  //was not minor type *1
-  case LYD  //Minor type *1000
-  case MAD 
-  case MUR 
-  case NAD 
-  case NZD 
-  case OMR 
-  case THB 
+ 
+  // case JPY  //was not minor type *1
+  // case LYD  //Minor type *1000
+  // case MAD 
+  // case MUR 
+  // case NAD 
+  // case NZD 
+  // case OMR 
+  // case THB 
   case USD 
-  case ZAR 
-  case FJD 
+  // case ZAR 
+  // case FJD 
   }
 }
 

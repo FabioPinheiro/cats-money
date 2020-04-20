@@ -1,71 +1,95 @@
 package app.fmgp.money
 
-import cats.Id
-import cats.data.WriterT
-import cats.instances.vector._
-import cats.kernel.Monoid
 import cats.syntax.all._
 import app.fmgp.money.Currency.CCC._
-import app.fmgp.money.instances.all._
+import app.fmgp.money.instances._
 
-/** test:runMain app.fmgp.money.Demo */
+object all extends MoneyInstances with MoneyTreeInstances
+//object all extends MoneyTreeInstances
 object Demo extends App {
+
+  import all._
 
   val a = MoneyY(100, USD)
   val b = MoneyY(200, USD)
   val c = MoneyY(300, GBP)
   val d = MoneyY(9000, EUR)
 
-  type MonetaryValue = MoneyTree[MoneyY[Currency.CCC]]
+  val ok: MoneyTree[MoneyY[Currency.CCC]] = a.pure[MoneyTree] :+ b :+ c :+ d
 
-  val m: MoneyTree[MoneyY[Currency.AUX]] =
-    (a: Currency.AUX).pure[MoneyTree] :+ b :+ c :+ d //This will not work with union type =(  (MonetaryValue )
-  // val m2: MonetaryValue = a.pure[MoneyTree].concat(Seq(b, c, d))
-  // assert(m == m2)
-  // println(m) //MoneyTree(MoneyY(100,USD), MoneyY(200,USD), MoneyY(300,GBP), MoneyY(9000,EUR)})
+  //FIXME
+  val maybeBug: MoneyTree[MoneyY[Currency.AUX]] = (a: Currency.AUX).pure[MoneyTree] :+ b :+ c :+ d
 
-  // val rc = PartialRateConverter[Currency.AUX, EUR.type](EUR, Map[Currency.AUX, BigDecimal](USD -> 0.8, GBP -> 1.1))
-  // implicit val shouldWeAddTheMonoidInsideTheRc: Monoid[MoneyY[EUR.type]] = moneyYMonoidT(EUR)
+}
 
-  // val ret = m.convertWithLog(rc)
-  // assert(ret.total.value == m.convert(rc).total)
-  // println(s"The total after convert is ${ret.total.value}")
-  // //The total after convert is MoneyY(9570.0,EUR)}
+import app.fmgp.money.{MoneyTree, MoneyZBranch, MoneyZLeaf}
+import cats.{Applicative, Eval, Functor, Monad, Show, Traverse}
 
-  // def report[T](x: WriterT[Id, Vector[String], MoneyY[T]]) = {
-  //   val (log, total) = x.run
-  //   log.mkString("### Report ###\n", "\n", s"\nConvert with log then total: $total\n##############")
-  // }
+class MoneyTreeMonad extends Monad[MoneyTree] {
+  override def pure[A](x: A): MoneyTree[A] = MoneyZLeaf(x)
 
-  // println(report(ret.total))
-  // //### Report ###
-  // //100USD(0.8)->80.0EUR
-  // //200USD(0.8)->160.0EUR
-  // //300GBP(1.1)->330.0EUR
-  // //Convert with log then total: MoneyY(9570.0,EUR)
-  // //##############
+  override def flatMap[A, B](fa: MoneyTree[A])(f: A => MoneyTree[B]): MoneyTree[B] =
+    fa match {
+      case MoneyZBranch(v: Seq[MoneyTree[A]]) => MoneyZBranch[B](v.map { e => flatMap(e)(f) })
+      case MoneyZLeaf(v)                      => f(v)
+    }
 
-  // //
-  // //
-  // //FIXME DOTTY
-  // // val commission = for {
-  // //   //_ <- Vector("Add commissions").tell
-  // //   fabio <- MoneyY(99.99, EUR).writer(Vector("Fabio's commission is 99.99")) //.pure[Logged]
-  // //   joao <- MoneyY(20, EUR).writer(Vector("Joao's commission is 20")) //.pure[Logged]
-  // // } yield (fabio |+| joao) // FIXME FIXME FIXME.combine
+  /**
+    * Stack Safety for Free implementation
+    * A
+    * B    C    D
+    * E   F       G
+    * H I
+    *
+    * ((E(HI))C(G)) <- all leafs
+    *
+    * A       .        | .
+    * BCD     33       | .
+    * EFCD    22 33    | .
+    * FCD     12 33    | E
+    * HICD    22 12 33 | E
+    * ICD     12 12 33 | HE
+    * CD      -2 12 33 | IHE
+    * CD      -2 33    | (HI)E
+    * CD      23       | (E(HI))
+    * D       13       | C(E(HI))
+    * G       11 13    | C(E(HI))
+    * .       -1 13    | GC(E(HI))
+    * .       -3       | (G)C(E(HI))
+    * .       .        | ((E(HI))C(G))
+    *
+    */
+  override def tailRecM[A, B](x: A)(f: A => MoneyTree[Either[A, B]]): MoneyTree[B] = {
+    //    flatMap(f(x)) {
+    //      case Left(value) => tailRecM(value)(f)
+    //      case Right(value) => MoneyZLeaf(value)
+    //    }
+    @scala.annotation.tailrec
+    def loop(
+        open: List[MoneyTree[Either[A, B]]],
+        closed: List[MoneyTree[B]],
+        state: List[(Int, Int)]
+    ): MoneyTree[B] = {
+      (open, state) match {
+        case (Nil, Nil) if closed.size == 1     => closed.head
+        case (MoneyZLeaf(Right(b)) :: Nil, Nil) => MoneyTree.one(b)
 
-  // // val ret2 = ret :+ commission
-  // // println(report(ret2.total))
-  // // println(ret2.total.value)
-  // //### Report ###
-  // //100USD(0.8)->80.0EUR
-  // //200USD(0.8)->160.0EUR
-  // //300GBP(1.1)->330.0EUR
-  // //Add commissions
-  // //Fabio's commission is 99.99
-  // //Joao's commission is 20
-  // //Convert with log then total: MoneyY(9689.99,EUR)
-  // //##############
-  // //MoneyY(9689.99,EUR)
+        case (Nil, (0, _) :: Nil) => MoneyTree.branch(closed.reverse)
+        case (Nil, _)             => throw new RuntimeException() //TODO is this an impossible case or not?
+        case (_, (0, t) :: (_s, _t) :: tail) =>
+          assert(closed.size >= t)
+          loop(open, MoneyZBranch(closed.take(t).reverse) :: closed.drop(t), (_s - 1, _t) :: tail)
+        case (MoneyZLeaf(Left(a)) :: next, _) =>
+          loop(f(a) :: next, closed, state)
+        case (MoneyZLeaf(Right(b)) :: next, (s, t) :: stateTail) =>
+          loop(next, MoneyTree.one(b) :: closed, (s - 1, t) :: stateTail)
+        case (MoneyZBranch(Nil) :: next, (_s, _t) :: stateTail) =>
+          loop(next, MoneyTree.empty :: closed, (_s - 1, _t) :: stateTail)
+        case (MoneyZBranch(seq) :: next, _state) =>
+          loop(seq.toList ++ next, closed, (seq.size, seq.size) :: _state)
+      }
+    }
 
+    loop(List(f(x)), Nil, List.empty)
+  }
 }
