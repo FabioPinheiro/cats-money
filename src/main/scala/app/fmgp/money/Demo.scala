@@ -9,6 +9,6 @@ object Demo extends App {
   type AUX = Int | Unit
 
   //FIXME
-  val maybeBug: MoneyTree[MoneyY[AUX]] = (MoneyY(100, Int): AUX).pure[MoneyTree]
+  val maybeBug: MoneyTree[MoneyY[AUX]] = (MoneyY(Int): AUX).pure[MoneyTree]
 
 }
