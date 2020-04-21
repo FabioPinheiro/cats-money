@@ -1,15 +1,15 @@
-package app.fmgp.money
-
-import cats.syntax.all._
-import app.fmgp.money._
-import MoneyTreeInstances._
-
 object Demo extends App {
 
-  type AUX = Int | Unit
+  trait AAA[T]
+  //Takes 50s to give a Type Mismatch Error on endlessCompilation
+  //given aaaShow[T](using Show[T]) as Show[AAA[T]] = ???
 
-  val endlessCompilation: MoneyTree[MoneyY[AUX]] = (MoneyY(Int): AUX).pure[MoneyTree]
+  //Takes more then 10 mins to give the Type Mismatch Error
+  implicit def aaaShow[T](implicit showT: cats.Show[T]): cats.Show[AAA[T]] = ???
 
+  import cats.syntax.all._ //From cats: libraryDependencies += ("org.typelevel" %% "cats-core" % "2.2.0-M1").withDottyCompat(scalaVersion.value)
+
+  ("string": Int | Unit) //This will give a Type Mismatch Error
 }
 
 // after a `jstack` on the sbt process
