@@ -3,6 +3,7 @@ package app.fmgp.money.instances
 import app.fmgp.money.{MoneyTree, MoneyZBranch, MoneyZLeaf}
 import cats.{Applicative, Eval, Functor, Monad, Show, Traverse}
 
+// TODO migrate to dotty
 trait MoneyTreeInstances {
   implicit def MoneyTreeShow[T](implicit showT: Show[T]): Show[MoneyTree[T]] =
     Show.show(elem => {

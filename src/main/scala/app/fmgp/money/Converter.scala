@@ -14,6 +14,7 @@ trait Converter[-FROM, TO] {
 /**
   * C is supose to be a union type
   * Try to use https://dotty.epfl.ch/docs/reference/new-types/match-types.html
+  * @throws scala.MatchError at runtime is a needed rate is missing
   */
 case class PartialRateConverter[C, T <: C](to: T, rates: Map[C, BigDecimal]) extends Converter[MoneyY[C], MoneyY[T]] {
   def tToT(to: T): PartialFunction[MoneyY[C], Logged[MoneyY[T]]] = {

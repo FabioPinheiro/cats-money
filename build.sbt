@@ -1,8 +1,8 @@
 name := "cats-money"
 version := "0.1.0"
 
-val dottyVersion = "0.23.0-RC1"
-val scala213Version = "2.13.1"
+val dottyVersion = "0.24.0-RC1"
+val scala213Version = "2.13.2"
 
 scalacOptions ++= Seq(
   "-encoding",

@@ -62,20 +62,25 @@ The current maintainers (people who can merge pull requests) are:
 #### TODO LIST
 * implement:
   * [ ] Traverse\[MoneyTree\]
+  * [ ] Money comparison of different Currency shound NOT compile
+    * Try derivation -> https://dotty.epfl.ch/docs/reference/contextual/derivation.html
+    * Try multiversal-equality -> https://dotty.epfl.ch/docs/reference/contextual/multiversal-equality.html
 * rename classes and draw a UML
   * [X] rename MoneyY and CurrencyY files
+  * [ ] rename MoneyY to Money.
+  * [ ] move all the other Money type to other place (like 'experimental' package)
 * currency
-  * [ ] add all currencies from ISO-4217
+  * [X] add all currencies from ISO-4217
   * create subset type of currencies
-    * [ ] try [shapeless][shapeless] Union type
+    * [-] try [shapeless][shapeless] Union type
       ```scala
       type U = Union.`'a -> EUR, 'b -> USD`.T
       val u1 = Coproduct[U]('a ->> EUR)
       println("u1", u1)
       ```
-    * [WIP] try [Dotty Union Types](https://dotty.epfl.ch/docs/reference/union-types.html) =)
+    * [X] try [Dotty Union Types](https://dotty.epfl.ch/docs/reference/union-types.html) =)
   * implement the rates conversion on a subset of currencies
-    * [ ] try [shapeless][shapeless] polymorphic function
+    * [-] try [shapeless][shapeless] polymorphic function
       ```scala
       object polymorphicF extends Poly1 {
         implicit def caseEUR = at[EUR.type](i => "sEUR")
@@ -90,7 +95,7 @@ The current maintainers (people who can merge pull requests) are:
     * [shapeless.test.illTyped][shapeless]
   * [X] Add a code coverage tool (sbt-scoverage)
 * demo:
-  * [X] (+- Done) Demo Main
+  * [WIP] (+- Done) Demo Main
 * to try:
   * [ ] Epimorphism, Monomorphism and Isomorphism
   * [X] Rings +-
