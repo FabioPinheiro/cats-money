@@ -10,7 +10,8 @@ import app.fmgp.money.Currency._
 //import scala.language.strictEquality
 
 object AUX {
-  type CURRENCY = Currency.GBP.type | Currency.USD.type | Currency.EUR.type | Currency.JPY.type
+  /** This is a subset of Currencies that will be used*/
+  type CURRENCY = Currency.GBP.type | Currency.USD.type | Currency.EUR.type //| Currency.JPY.type
   //type CURRENCY = Currency.type
   object Instances extends app.fmgp.money.instances.InstancesForCurrency[CURRENCY]
 }
@@ -20,11 +21,11 @@ object Demo extends App {
   import AUX._
   import AUX.Instances.all._
 
-  val a = MoneyY[USD.type](100, USD)
-  val b = MoneyY[USD.type](200, USD)
-  val c = MoneyY[GBP.type](300, GBP)
-  val d = MoneyY[EUR.type](9000, EUR)
-  val e = MoneyY[JPY.type](1, JPY)
+  val a = MoneyY(100, USD)
+  val b = MoneyY(200, USD)
+  val c = MoneyY(300, GBP)
+  val d = MoneyY(9000, EUR)
+  val e = MoneyY(1, JPY)
 
   type MonetaryValue = MoneyTree[MoneyY[CURRENCY]]
 
@@ -97,17 +98,18 @@ object Demo extends App {
 
 
 
-  // TODO try play with derivation and Multiversal Equality
+  // Done try play with derivation and Multiversal Equality
   // https://dotty.epfl.ch/docs/reference/contextual/derivation.html
   // https://dotty.epfl.ch/docs/reference/contextual/multiversal-equality.html
 
-  println(USD == GBP) //TODO how do I make this not to compile
+  //println(USD == GBP) //Done how do I make this not to compile
   //println(USD.eqv(GBP)) // Not implemented
   println(a == MoneyY[USD.type](100, USD)) //ok (true)
   println(a.eqv(MoneyY[USD.type](100, USD))) //ok (true)
   println(a == b) //ok (false)
   println(a.eqv(b)) //ok (false)
-  println(a == c) //TODO how do I make this not to compile
+  //println(c == a) //Done how do I make this not to compile
   //println(a.eqv(c)) //ok (Compilation failed)
-  
+
+  //same Box[Currency.EUR.type](Currency.EUR) == Box[Currency.USD.type](Currency.USD)
 }

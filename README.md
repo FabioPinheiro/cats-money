@@ -62,9 +62,10 @@ The current maintainers (people who can merge pull requests) are:
 #### TODO LIST
 * implement:
   * [ ] Traverse\[MoneyTree\]
-  * [ ] Money comparison of different Currency shound NOT compile
+  * [X] Money comparison of different Currency shound NOT compile
     * Try derivation -> https://dotty.epfl.ch/docs/reference/contextual/derivation.html
     * Try multiversal-equality -> https://dotty.epfl.ch/docs/reference/contextual/multiversal-equality.html
+  * [ ] Add Documentation
 * rename classes and draw a UML
   * [X] rename MoneyY and CurrencyY files
   * [ ] rename MoneyY to Money.
