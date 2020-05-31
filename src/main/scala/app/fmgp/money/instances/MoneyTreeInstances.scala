@@ -1,5 +1,6 @@
 package app.fmgp.money.instances
 
+import app.fmgp.money.MoneyTree
 import app.fmgp.money.{MoneyTree, MoneyZBranch, MoneyZLeaf}
 import cats.{Applicative, Eval, Functor, Monad, Show, Traverse}
 
@@ -98,9 +99,9 @@ class MoneyTreeMonad extends Monad[MoneyTree] {
       (open, state) match {
         case (Nil, Nil) if closed.size == 1     => closed.head
         case (MoneyZLeaf(Right(b)) :: Nil, Nil) => MoneyTree.one(b)
-
-        case (Nil, (0, _) :: Nil) => MoneyTree.branch(closed.reverse)
-        case (Nil, _)             => throw new RuntimeException() //TODO is this an impossible case or not?
+        case (MoneyZLeaf(Right(_)) :: ooo, Nil) => ??? //TODO is this an impossible case or not?
+        case (Nil, (0, _) :: Nil)               => MoneyTree.branch(closed.reverse)
+        case (Nil, _)                           => throw new RuntimeException() //TODO is this an impossible case or not?
         case (_, (0, t) :: (_s, _t) :: tail) =>
           assert(closed.size >= t)
           loop(open, MoneyZBranch(closed.take(t).reverse) :: closed.drop(t), (_s - 1, _t) :: tail)

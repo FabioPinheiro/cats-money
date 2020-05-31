@@ -20,7 +20,7 @@ object AUX {
 object Demo extends App {
   import AUX._
   import AUX.Instances.all._
-
+  
   val a = MoneyY(100, USD)
   val b = MoneyY(200, USD)
   val c = MoneyY(300, GBP)

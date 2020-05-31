@@ -66,10 +66,11 @@ The current maintainers (people who can merge pull requests) are:
     * Try derivation -> https://dotty.epfl.ch/docs/reference/contextual/derivation.html
     * Try multiversal-equality -> https://dotty.epfl.ch/docs/reference/contextual/multiversal-equality.html
   * [ ] Add Documentation
+  * [ ] Use dotty Importing Givens - https://dotty.epfl.ch/docs/reference/contextual/given-imports.html1
 * rename classes and draw a UML
   * [X] rename MoneyY and CurrencyY files
   * [ ] rename MoneyY to Money.
-  * [ ] move all the other Money type to other place (like 'experimental' package)
+  * [X] move all the other Money type to other place (like 'experimental' package)
 * currency
   * [X] add all currencies from ISO-4217
   * create subset type of currencies
