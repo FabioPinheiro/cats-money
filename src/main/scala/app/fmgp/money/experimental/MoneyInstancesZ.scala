@@ -1,4 +1,4 @@
-package app.fmgp.money.instances
+package app.fmgp.money.experimental
 
 import app.fmgp.money._
 //import app.fmgp.money.instances.MoneyInstances.MoneyZWithTag
@@ -32,7 +32,13 @@ trait MoneyInstancesZ {
   // // }
   // implicit def moneyZMonoidK[T]: MonoidK[MoneyZ] = new MoneyZMonoidK
   // //implicit def moneyZMonoidKMultiplication[T]: MonoidK[MoneyZWithTag] = new MoneyZMonoidKWithTag
+  
+  given MonoidK[MoneyZ] = new MonoidK[MoneyZ] {
+    override def empty[A]: MoneyZ[A] = MoneyZ[A](0)
+    override def combineK[A](x: MoneyZ[A], y: MoneyZ[A]): MoneyZ[A] = MoneyZ[A](x.amount |+| y.amount)
+  }
 }
+
 
 // class MoneyZMonoidKWithTag extends MonoidK[MoneyZWithTag] {
 //   override def empty[A]: MoneyZWithTag[A] = MoneyZ[A](0).asInstanceOf[MoneyZWithTag[A]]

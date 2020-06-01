@@ -19,20 +19,20 @@ object AUX {
 /** test:runMain app.fmgp.money.Demo */
 object Demo extends App {
   import AUX._
-  import AUX.Instances.all._
+  import AUX.Instances.all.{given _, _}
   
-  val a = MoneyY(100, USD)
-  val b = MoneyY(200, USD)
-  val c = MoneyY(300, GBP)
-  val d = MoneyY(9000, EUR)
-  val e = MoneyY(1, JPY)
+  val a = Money(100, USD)
+  val b = Money(200, USD)
+  val c = Money(300, GBP)
+  val d = Money(9000, EUR)
+  val e = Money(1, JPY)
 
-  type MonetaryValue = MoneyTree[MoneyY[CURRENCY]]
+  type MonetaryValue = MoneyTree[Money[CURRENCY]]
 
   val m: MonetaryValue = a.pure[MoneyTree] :+ b :+ c :+ d
   val m2: MonetaryValue = a.pure[MoneyTree].concat(Seq(b, c, d))
   assert(m == m2)
-  println(m) //MoneyTree(MoneyY(100,USD), MoneyY(200,USD), MoneyY(300,GBP), MoneyY(9000,EUR)})
+  println(m) //MoneyTree(Money(100,USD), Money(200,USD), Money(300,GBP), Money(9000,EUR)})
   println(m.collapse)
 
 
@@ -40,8 +40,8 @@ object Demo extends App {
   // ### RateConverter ###
   // #####################
   val rc = PartialRateConverter[CURRENCY, EUR.type](EUR, Map[CURRENCY, BigDecimal](USD -> 0.8, GBP -> 1.1))
-  //implicit val shouldWeAddTheMonoidInsideTheRc: Monoid[MoneyY[EUR.type]] = moneyYMonoidT(EUR)
-  given shouldWeAddTheMonoidInsideTheRc as Monoid[MoneyY[EUR.type]] = moneyYMonoidT(EUR)
+  //implicit val shouldWeAddTheMonoidInsideTheRc: Monoid[Money[EUR.type]] = MoneyMonoidT(EUR)
+  given shouldWeAddTheMonoidInsideTheRc as Monoid[Money[EUR.type]] = MoneyMonoidT(EUR)
 
 
   // ####################
@@ -52,9 +52,9 @@ object Demo extends App {
 
   val ret = m.convertWithLog(rc)
   assert(ret.total.value == m.convert(rc).total)
-  println(s"The total after convert is ${ret.total.value}") //The total after convert is MoneyY(9570.0,EUR)}
+  println(s"The total after convert is ${ret.total.value}") //The total after convert is Money(9570.0,EUR)}
 
-  def report[T](x: WriterT[Id, Vector[String], MoneyY[T]]) = {
+  def report[T](x: WriterT[Id, Vector[String], Money[T]]) = {
     val (log, total) = x.run
     log.mkString("### Report ###\n", "\n", s"\nConvert with log then total: $total\n##############")
   }
@@ -64,7 +64,7 @@ object Demo extends App {
   //100USD(0.8)->80.0EUR
   //200USD(0.8)->160.0EUR
   //300GBP(1.1)->330.0EUR
-  //Convert with log then total: MoneyY(9570.0,EUR)
+  //Convert with log then total: Money(9570.0,EUR)
   //##############
 
 
@@ -74,9 +74,9 @@ object Demo extends App {
   import cats.catsInstancesForId
   val commission = for {
     _ <- Vector("Add commissions").tell
-    fabio <- MoneyY[EUR.type](99.99, EUR).writer(Vector("Fabio's commission is 99.99")) //.pure[Logged]
-    //home <- WriterT.value[Id, Vector[String], MoneyY[EUR.type]](MoneyY[EUR.type](10000000, EUR)) //MoneyY[EUR.type](20, EUR).value
-    joao <- MoneyY[EUR.type](20, EUR).writer(Vector("Joao's commission is 20")) //.pure[Logged]
+    fabio <- Money[EUR.type](99.99, EUR).writer(Vector("Fabio's commission is 99.99")) //.pure[Logged]
+    //home <- WriterT.value[Id, Vector[String], Money[EUR.type]](Money[EUR.type](10000000, EUR)) //Money[EUR.type](20, EUR).value
+    joao <- Money[EUR.type](20, EUR).writer(Vector("Joao's commission is 20")) //.pure[Logged]
   } yield (fabio |+| joao )
 
   println("")
@@ -89,10 +89,10 @@ object Demo extends App {
   //Add commissions
   //Fabio's commission is 99.99
   //Joao's commission is 20
-  //Convert with log then total: MoneyY(9689.99,EUR)
+  //Convert with log then total: Money(9689.99,EUR)
   //##############
   println(ret2.total.value)
-  //MoneyY(9689.99,EUR)
+  //Money(9689.99,EUR)
 
 
 
@@ -104,8 +104,8 @@ object Demo extends App {
 
   //println(USD == GBP) //Done how do I make this not to compile
   //println(USD.eqv(GBP)) // Not implemented
-  println(a == MoneyY[USD.type](100, USD)) //ok (true)
-  println(a.eqv(MoneyY[USD.type](100, USD))) //ok (true)
+  println(a == Money[USD.type](100, USD)) //ok (true)
+  println(a.eqv(Money[USD.type](100, USD))) //ok (true)
   println(a == b) //ok (false)
   println(a.eqv(b)) //ok (false)
   //println(c == a) //Done how do I make this not to compile

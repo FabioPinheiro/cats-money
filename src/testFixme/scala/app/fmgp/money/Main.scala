@@ -1,6 +1,6 @@
 package app.fmgp.money
 
-import app.fmgp.money.CurrencyY._
+import app.fmgp.money.Currency._
 import app.fmgp.money.instances.MoneyInstances.{MoneyZWithTag, ring}
 import app.fmgp.money.instances.all._
 import cats.syntax.all._
@@ -8,8 +8,6 @@ import shapeless._
 
 /** test:runMain app.fmgp.money.Main */
 object Main extends App {
-
-
 
   val aa = MoneyZ[USD.type](100)
   val bb = MoneyZ[USD.type](200)
@@ -23,7 +21,6 @@ object Main extends App {
 
   Currency.test
 
-
 //  implicit val gUSD = Generic[MoneyZ[USD.type]]
 //  implicit val gEUR = Generic[MoneyZ[EUR.type]]
 //  implicit val gGBP = Generic[MoneyZ[GBP.type]]
@@ -34,21 +31,22 @@ object Main extends App {
 
   implicit class MoneyXPTO[FROM](value: MoneyZ[FROM]) {
     def to[TO, R <: HList](c: TO)(
-      implicit
-      genFrom: Generic.Aux[MoneyZ[FROM], R],
-      genTo: Generic.Aux[MoneyZ[TO], R],
-      fromRing: MoneyZWithTag[FROM],
-      toRing: MoneyZWithTag[TO]
+        implicit
+        genFrom: Generic.Aux[MoneyZ[FROM], R],
+        genTo: Generic.Aux[MoneyZ[TO], R],
+        fromRing: MoneyZWithTag[FROM],
+        toRing: MoneyZWithTag[TO]
     ): MoneyZ[TO] = {
       object ring extends Poly3 {
         val fa: MoneyZ[FROM] => R = genFrom.to _
         val fb: R => MoneyZ[TO] = genTo.from _
         val fab: MoneyZ[FROM] => MoneyZ[TO] = fa.andThen(fb)
 
-        implicit val r2rCase: Case.Aux[MoneyZ[FROM], MoneyZWithTag[FROM], MoneyZWithTag[TO], MoneyZ[TO]] = at { (v, aa, bb) =>
-          val inputValueOnBase = v.asInstanceOf[MoneyZWithTag[FROM]] <+> aa
-          val outputValueOnBase = fab.apply(inputValueOnBase)
-          outputValueOnBase.asInstanceOf[MoneyZWithTag[TO]] <+> bb
+        implicit val r2rCase: Case.Aux[MoneyZ[FROM], MoneyZWithTag[FROM], MoneyZWithTag[TO], MoneyZ[TO]] = at {
+          (v, aa, bb) =>
+            val inputValueOnBase = v.asInstanceOf[MoneyZWithTag[FROM]] <+> aa
+            val outputValueOnBase = fab.apply(inputValueOnBase)
+            outputValueOnBase.asInstanceOf[MoneyZWithTag[TO]] <+> bb
         }
       }
       ring(value, fromRing, toRing)
@@ -62,24 +60,23 @@ object Main extends App {
   println(cc.show, cc.to(USD).show, cc.to(USD).to(USD).show)
   println(cc.show, cc.to(EUR).show, cc.to(USD).to(EUR).show)
 
-
   //val aux: Vector[MoneyZWithTag[_]] = runtime.toVector.map(e => ring(e._1, e._2)).map(e => println(moneyZShow.show(e))) //This don't not work type erasure
-  val runtime = Map(GBP->1.2d, USD -> 1d, EUR -> 1.32d)
-  val ringHLint = (GBP->1.2d) :: (USD -> 1d) :: (EUR -> 1.32d) :: HNil
+  val runtime = Map(GBP -> 1.2d, USD -> 1d, EUR -> 1.32d)
+  val ringHLint = (GBP -> 1.2d) :: (USD -> 1d) :: (EUR -> 1.32d) :: HNil
   val head = ringHLint.head
   println(ringHLint, head)
   //TODO convert a Seq into a ring at runtime
-  println(ring(head._1,head._2).show)
+  println(ring(head._1, head._2).show)
   val base: HList = EUR :: HNil
   def loop2 = USD :: base
   def loop3 = GBP :: loop2
   println(loop3)
   println(ringHLint.unzip._1)
 
-  def OP(vector:Vector[_]): HList = {
-    def loop(v:Seq[_], l:HList): HList = v match {
+  def OP(vector: Vector[_]): HList = {
+    def loop(v: Seq[_], l: HList): HList = v match {
       case x if !x.isEmpty => loop(x.tail, x.head :: l)
-      case _ => l
+      case _               => l
     }
     loop(vector, HNil)
   }
@@ -116,9 +113,7 @@ object size extends Poly1 {
   implicit def caseTuple[T, U](implicit st: Case.Aux[T, Int], su: Case.Aux[U, Int]) = at[(T, U)](t => size(t._1) + size(t._2))
 }
 println("size(23)", size((230, 123)))
-*/
-
-
+ */
 //import app.fmgp.money.Currency._
 //  val a: MoneyX[Currency.Value] = MoneyX(111, USD)
 //  val b = MoneyX(222, USD)
@@ -128,8 +123,6 @@ println("size(23)", size((230, 123)))
 //  val r2: Wallet[CurrencyX] = a.toMoneyX |+| b.toMoneyX |+| c.toMoneyX
 //  println(r1)
 //  println(r2)
-
-
 //  import scala.reflect.runtime.universe
 //  import scala.reflect.runtime.universe._
 //  implicit class TypeDetector[T: TypeTag](related: MoneyZ[T]) {

@@ -1,41 +1,41 @@
 package app.fmgp.money.instances
 
 import app.fmgp.money.MoneyTree
-import app.fmgp.money.{MoneyTree, MoneyZBranch, MoneyZLeaf}
+import app.fmgp.money.{MoneyTree, MoneyBranch, MoneyLeaf}
 import cats.{Applicative, Eval, Functor, Monad, Show, Traverse}
 
 // TODO migrate to dotty
 trait MoneyTreeInstances {
-  implicit def MoneyTreeShow[T](implicit showT: Show[T]): Show[MoneyTree[T]] =
-    Show.show(elem => {
-      def loop(mt: MoneyTree[T])(implicit showT: Show[T]): String = mt match {
-        case MoneyZBranch(value) => value.map(e => loop(e)).mkString("[", " + ", "]")
-        case MoneyZLeaf(value)   => showT.show(value)
-      }
+  // implicit def MoneyTreeShow[T](implicit showT: Show[T]): Show[MoneyTree[T]] =
+  //   Show.show(elem => {
+  //     def loop(mt: MoneyTree[T])(implicit showT: Show[T]): String = mt match {
+  //       case MoneyBranch(value) => value.map(e => loop(e)).mkString("[", " + ", "]")
+  //       case MoneyLeaf(value)   => showT.show(value)
+  //     }
 
-      loop(elem)
-    })
-  implicit val MoneyTreeFunctor: Functor[MoneyTree] = new MoneyTreeFunctor
-  implicit val MoneyTreeMonad: Monad[MoneyTree] = new MoneyTreeMonad
-  val MoneyTreeTraverse: Traverse[MoneyTree] = new MoneyTreeTraverse
+  //     loop(elem)
+  //   })
+  given Functor[MoneyTree] = new MoneyTreeFunctor
+  given Monad[MoneyTree] = new MoneyTreeMonad
+  //given Traverse[MoneyTree] = new MoneyTreeTraverse
 }
 
 class MoneyTreeFunctor extends Functor[MoneyTree] {
   def map[A, B](tree: MoneyTree[A])(func: A => B): MoneyTree[B] =
     tree match {
-      case MoneyZBranch(value) => MoneyZBranch(value.map(e => map(e)(func)))
-      case MoneyZLeaf(value)   => MoneyZLeaf[B](func(value))
+      case MoneyBranch(value) => MoneyBranch(value.map(e => map(e)(func)))
+      case MoneyLeaf(value)   => MoneyLeaf[B](func(value))
     }
 }
 
 class MoneyTreeApplicative extends Applicative[MoneyTree] {
-  override def pure[A](x: A): MoneyTree[A] = MoneyZLeaf(x)
+  override def pure[A](x: A): MoneyTree[A] = MoneyLeaf(x)
   override def ap[A, B](ff: MoneyTree[A => B])(fa: MoneyTree[A]): MoneyTree[B] = fa match {
-    case MoneyZBranch(seq) => MoneyZBranch(seq.map(ap(ff)))
-    case MoneyZLeaf(v) =>
+    case MoneyBranch(seq) => MoneyBranch(seq.map(ap(ff)))
+    case MoneyLeaf(v) =>
       ff match {
-        case MoneyZLeaf(a2b) => MoneyZLeaf(a2b(v))
-        case x @ MoneyZBranch(_) =>
+        case MoneyLeaf(a2b) => MoneyLeaf(a2b(v))
+        case x @ MoneyBranch(_) =>
           x.collectValues.headOption
             .map(a2b => MoneyTree.one(a2b(v)))
             .getOrElse(MoneyTree.empty) //HUM ... (this inner match is bad)
@@ -52,12 +52,12 @@ class MoneyTreeTraverse extends Traverse[MoneyTree] {
 }
 
 class MoneyTreeMonad extends Monad[MoneyTree] {
-  override def pure[A](x: A): MoneyTree[A] = MoneyZLeaf(x)
+  override def pure[A](x: A): MoneyTree[A] = MoneyLeaf(x)
 
   override def flatMap[A, B](fa: MoneyTree[A])(f: A => MoneyTree[B]): MoneyTree[B] =
     fa match {
-      case MoneyZBranch(v: Seq[MoneyTree[A]]) => MoneyZBranch[B](v.map { e => flatMap(e)(f) })
-      case MoneyZLeaf(v)                      => f(v)
+      case MoneyBranch(v: Seq[MoneyTree[A]]) => MoneyBranch[B](v.map { e => flatMap(e)(f) })
+      case MoneyLeaf(v)                      => f(v)
     }
 
   /**
@@ -88,7 +88,7 @@ class MoneyTreeMonad extends Monad[MoneyTree] {
   override def tailRecM[A, B](x: A)(f: A => MoneyTree[Either[A, B]]): MoneyTree[B] = {
     //    flatMap(f(x)) {
     //      case Left(value) => tailRecM(value)(f)
-    //      case Right(value) => MoneyZLeaf(value)
+    //      case Right(value) => MoneyLeaf(value)
     //    }
     @scala.annotation.tailrec
     def loop(
@@ -98,20 +98,20 @@ class MoneyTreeMonad extends Monad[MoneyTree] {
     ): MoneyTree[B] = {
       (open, state) match {
         case (Nil, Nil) if closed.size == 1     => closed.head
-        case (MoneyZLeaf(Right(b)) :: Nil, Nil) => MoneyTree.one(b)
-        case (MoneyZLeaf(Right(_)) :: ooo, Nil) => ??? //TODO is this an impossible case or not?
+        case (MoneyLeaf(Right(b)) :: Nil, Nil) => MoneyTree.one(b)
+        case (MoneyLeaf(Right(_)) :: ooo, Nil) => ??? //TODO is this an impossible case or not?
         case (Nil, (0, _) :: Nil)               => MoneyTree.branch(closed.reverse)
         case (Nil, _)                           => throw new RuntimeException() //TODO is this an impossible case or not?
         case (_, (0, t) :: (_s, _t) :: tail) =>
           assert(closed.size >= t)
-          loop(open, MoneyZBranch(closed.take(t).reverse) :: closed.drop(t), (_s - 1, _t) :: tail)
-        case (MoneyZLeaf(Left(a)) :: next, _) =>
+          loop(open, MoneyBranch(closed.take(t).reverse) :: closed.drop(t), (_s - 1, _t) :: tail)
+        case (MoneyLeaf(Left(a)) :: next, _) =>
           loop(f(a) :: next, closed, state)
-        case (MoneyZLeaf(Right(b)) :: next, (s, t) :: stateTail) =>
+        case (MoneyLeaf(Right(b)) :: next, (s, t) :: stateTail) =>
           loop(next, MoneyTree.one(b) :: closed, (s - 1, t) :: stateTail)
-        case (MoneyZBranch(Nil) :: next, (_s, _t) :: stateTail) =>
+        case (MoneyBranch(Nil) :: next, (_s, _t) :: stateTail) =>
           loop(next, MoneyTree.empty :: closed, (_s - 1, _t) :: stateTail)
-        case (MoneyZBranch(seq) :: next, _state) =>
+        case (MoneyBranch(seq) :: next, _state) =>
           loop(seq.toList ++ next, closed, (seq.size, seq.size) :: _state)
       }
     }
