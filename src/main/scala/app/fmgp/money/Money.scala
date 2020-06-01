@@ -1,8 +1,40 @@
 package app.fmgp.money
 
-sealed abstract case class Money[+T](amount: BigDecimal, currency: T) derives Eql
-
 object Money {
   def apply[T](amount: BigDecimal, t: T): Money[T] = new Money[T](amount, t) {}
   def fromTuple[T](m: (T, BigDecimal)): Money[T] = Money.apply(m._2, m._1)
 }
+
+sealed abstract case class Money[+T](amount: BigDecimal, currency: T) extends scala.math.ScalaNumber derives Eql //with ScalaNumericConversions with Serializable with Ordered[BigDecimal] 
+{
+  override def doubleValue(): Double = amount.doubleValue
+  override def floatValue(): Float = amount.floatValue
+  override def intValue(): Int = amount.intValue
+  override def longValue(): Long = amount.longValue
+  // Members declared in scala.math.ScalaNumber
+  override def isWhole(): Boolean = amount.isWhole
+  override def underlying(): Object = amount.underlying
+
+  /** Addition of Money - Must be on the safe type of currency */
+  def +[C] (that: Money[C])(using =:=[C,T]): Money[T] = Money[T](this.amount + that.amount, this.currency)
+
+  /** Subtraction of Money - Must be on the safe type of currency */
+  def -[C] (that: Money[C])(using =:=[C,T]): Money[T] = Money[T](this.amount - that.amount, this.currency)
+
+  /** Multiplication of Money */
+  def * (value: BigDecimal):  Money[T] = Money[T](this.amount * value, this.currency)
+  
+  /** Multiplication of Money */
+  def / (value: BigDecimal):  Money[T] = Money[T](this.amount / value, this.currency)
+  
+  /** Remainder after dividing */
+  def % (value: BigDecimal):  Money[T] = Money[T](this.amount % value, this.currency)
+
+  /** Division and Remainder */
+  def /% (value: BigDecimal):  (Money[T], Money[T]) = {
+    val aux = this.amount /% value
+    (Money[T](aux._1, this.currency), Money[T](aux._2, this.currency))
+  }
+}
+//TODO implement basic opetation for Money (in the same type)
+// https://github.com/scala/scala/blob/2.13.x/src/library/scala/math/BigDecimal.scala

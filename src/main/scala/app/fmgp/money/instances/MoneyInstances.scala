@@ -49,7 +49,7 @@ class MoneyMonoidC[CURRENCY, C <: CURRENCY](
   lazy val monoidOfManeyC: MoneyMonoid[CURRENCY] = new MoneyMonoid[CURRENCY](c)
   given MoneyMonoid[CURRENCY] = monoidOfManeyC
 
-  override def combine(x: Money[CURRENCY], y: Money[CURRENCY]): Money[CURRENCY] =
-    monoidOfManeyC.combine(partialRateConverter.convert(x), partialRateConverter.convert(y))
+  override def combine(x: Money[CURRENCY], y: Money[CURRENCY]): Money[CURRENCY] = ???
+    ///monoidOfManeyC.combine(partialRateConverter.convert(x), partialRateConverter.convert(y))
   override def empty: Money[CURRENCY] = Money[CURRENCY](0, c)
 }

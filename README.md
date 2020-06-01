@@ -69,7 +69,7 @@ The current maintainers (people who can merge pull requests) are:
   * [ ] Use dotty Importing Givens - https://dotty.epfl.ch/docs/reference/contextual/given-imports.html1
 * rename classes and draw a UML
   * [X] rename MoneyY and CurrencyY files
-  * [ ] rename MoneyY to Money.
+  * [X] rename MoneyY to Money.
   * [X] move all the other Money type to other place (like 'experimental' package)
 * currency
   * [X] add all currencies from ISO-4217

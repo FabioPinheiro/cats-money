@@ -19,8 +19,6 @@ object Main extends App {
   println(s"MoneyZ: <+>        ${aa <+> bb}")
   println(s"MoneyZ: show       ${show"$aa"}")
 
-  Currency.test
-
 //  implicit val gUSD = Generic[MoneyZ[USD.type]]
 //  implicit val gEUR = Generic[MoneyZ[EUR.type]]
 //  implicit val gGBP = Generic[MoneyZ[GBP.type]]
