@@ -1,11 +1,5 @@
 package app.fmgp.money.experimental
 
-import cats.Id
-import cats.data.WriterT
-import cats.instances.vector._
-import cats.kernel.Monoid
-import cats.syntax.all._
-
 import app.fmgp.money._
 import app.fmgp.money.Currency._
 //import scala.language.strictEquality

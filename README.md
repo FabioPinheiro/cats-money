@@ -66,9 +66,9 @@ The current maintainers (people who can merge pull requests) are:
     * Try derivation -> https://dotty.epfl.ch/docs/reference/contextual/derivation.html
     * Try multiversal-equality -> https://dotty.epfl.ch/docs/reference/contextual/multiversal-equality.html
   * [ ] Add Documentation
+    * [WIP] Make a website with https://v2.docusaurus.io/
   * [ ] Use dotty Importing Givens - https://dotty.epfl.ch/docs/reference/contextual/given-imports.html
-  * [ ] Wirte the Demo using mdoc
-  * [ ] Make a website with https://v2.docusaurus.io/
+  * [ ] Wirte the Demo using mdoc. (Need to wait for better integration with dotty)
 * rename classes and draw a UML
   * [X] rename MoneyY and CurrencyY files
   * [X] rename MoneyY to Money.

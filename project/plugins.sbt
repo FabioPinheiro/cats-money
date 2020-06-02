@@ -7,4 +7,4 @@ addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.1")
 addSbtPlugin("com.codacy" % "sbt-codacy-coverage" % "2.112")
 
 /** https://scalameta.org/mdoc/docs/installation.html#sbt */
-addSbtPlugin("org.scalameta" % "sbt-mdoc" % "2.2.0")
+//addSbtPlugin("org.scalameta" % "sbt-mdoc" % "2.2.0") //not good enough for a dotty project at the moment IMO
