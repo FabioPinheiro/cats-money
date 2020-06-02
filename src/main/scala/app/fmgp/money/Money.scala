@@ -5,7 +5,7 @@ object Money {
   def fromTuple[T](m: (T, BigDecimal)): Money[T] = Money.apply(m._2, m._1)
 }
 
-sealed abstract case class Money[+T](amount: BigDecimal, currency: T) extends scala.math.ScalaNumber derives Eql //with ScalaNumericConversions with Serializable with Ordered[BigDecimal] 
+sealed abstract case class Money[T](amount: BigDecimal, currency: T) extends scala.math.ScalaNumber derives Eql //with ScalaNumericConversions with Serializable with Ordered[BigDecimal] 
 {
   override def doubleValue(): Double = amount.doubleValue
   override def floatValue(): Float = amount.floatValue

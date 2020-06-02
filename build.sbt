@@ -1,5 +1,6 @@
 name := "cats-money"
-version := "0.1.0"
+version := "0.1.0-SNAPSHOT"
+organization := "app.fmgp"
 
 val dottyVersion = "0.24.0-RC1"
 val scala213Version = "2.13.2"
@@ -39,3 +40,19 @@ lazy val root = project
     // To cross compile with Dotty and Scala 2
     crossScalaVersions := Seq(dottyVersion, scala213Version)
   )
+
+// lazy val docs = project
+//   .in(file("docs-target")) // important: it must not be docs/
+//   .settings(
+//     //mdoc := run.in(Compile).evaluated,
+//     //We need to filter mdoc from the libraryDependencies because mdoc is not publish for dotty
+//     libraryDependencies --= Seq("org.scalameta" %% "mdoc" % "2.2.0"),
+//     libraryDependencies += ("org.scalameta" %% "mdoc" % "2.2.0")
+//       .withDottyCompat(scalaVersion.value),
+//     libraryDependencies += ("app.fmgp" %% "cats-money" % "0.1.0-SNAPSHOT"),
+//     scalaVersion := dottyVersion,
+//     mdocVariables := Map("VERSION" -> version.value),
+//     mdocOut := baseDirectory.in(ThisBuild).value / "website" / "docs",
+//   )
+//   .dependsOn(root)
+//   .enablePlugins(MdocPlugin)
