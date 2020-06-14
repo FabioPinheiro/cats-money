@@ -4,8 +4,10 @@ module.exports = {
   url: 'https://cats-money.fmgp.app/',  //FIXME
   baseUrl: '/',
   favicon: 'img/favicon.ico',
-  organizationName: 'app.fmgp', // Usually your GitHub org/user name.
-  projectName: 'Cats-Money', // Usually your repo name.
+  organizationName: 'FabioPinheiro', // Usually your GitHub org/user name.
+  projectName: 'cats-money', // Usually your repo name.
+  url: 'https://FabioPinheiro.github.io',
+  baseUrl: '/cats-money/',
   themeConfig: {
     navbar: {
       title: 'Cats-Money',

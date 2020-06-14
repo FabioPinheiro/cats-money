@@ -3,6 +3,7 @@ scala:
  - 0.24.0-RC1
 
 script:
- - sbt clean coverage test
-after_success:
- - sbt coverageReport codacyCoverage
+ - sbt clean test
+# - sbt clean coverage test
+#after_success:
+# - sbt coverageReport codacyCoverage
