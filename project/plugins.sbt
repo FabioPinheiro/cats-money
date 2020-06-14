@@ -1,7 +1,7 @@
 addSbtPlugin("ch.epfl.lamp" % "sbt-dotty" % "0.4.1")
 
 /** https://github.com/codacy/sbt-codacy-coverage#sbt-codacy-coverage */
-addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.1")
+addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.6.1")
 
 /** https://maven-badges.herokuapp.com/maven-central/com.codacy/sbt-codacy-coverage */
 addSbtPlugin("com.codacy" % "sbt-codacy-coverage" % "2.112")

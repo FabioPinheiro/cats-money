@@ -6,47 +6,39 @@ import cats.instances.vector._
 import cats.kernel.Monoid
 import cats.syntax.all._
 
-import app.fmgp.money.Currency._
-//import scala.language.strictEquality
-
-
 /** test:runMain app.fmgp.money.Demo */
 object Demo extends App {
+
   /** This is a subset of Currencies that will be used*/
   type CURRENCY = GBP.type | USD.type | EUR.type
   //| Currency.JPY.type
-  object Instances extends app.fmgp.money.instances.InstancesForCurrency[CURRENCY]
-  import Instances.all.{given _, _}
-  
+  // object Instances extends app.fmgp.money.instances.InstancesForCurrency[CURRENCY]
+  // import Instances.all.{given _, _}
+
   val a = Money(100, USD)
   val b = Money(200, USD)
   val c = Money(300, GBP)
   val d = Money(9000, EUR)
   val e = Money(1, JPY)
 
-  type MonetaryValue = MoneyTree[Money[CURRENCY]] //FIXME Money is now invarient
+  //type MonetaryValue = MoneyTree[Money[CURRENCY]] //FIXME Money is now invarient
 
-  // val m: MonetaryValue = a.pure[MoneyTree] :+ b :+ c :+ d
-  // val m2: MonetaryValue = a.pure[MoneyTree].concat(Seq(b, c, d))
+  // val monadTree = new app.fmgp.money.instances.MoneyTreeMonad
+  // val m1: MonetaryValue = monadTree.pure[MoneyTree](a) :+ b :+ c :+ d
+  // val m2: MonetaryValue = monadTree.pure[MoneyTree](a).concat(Seq(b, c, d))
   // assert(m == m2)
   // println(m) //MoneyTree(Money(100,USD), Money(200,USD), Money(300,GBP), Money(9000,EUR)})
   // println(m.collapse)
-
-
   // // #####################
   // // ### RateConverter ###
   // // #####################
   // val rc = PartialRateConverter[CURRENCY, EUR.type](EUR, Map[CURRENCY, BigDecimal](USD -> 0.8, GBP -> 1.1))
   // //implicit val shouldWeAddTheMonoidInsideTheRc: Monoid[Money[EUR.type]] = MoneyMonoidT(EUR)
   // given shouldWeAddTheMonoidInsideTheRc as Monoid[Money[EUR.type]] = MoneyMonoidT(EUR)
-
-
   // // ####################
   // // ### Traceability ###
   // // ####################
   // //TODO MoneyTree With Traceability
-
-
   // val ret = m.convertWithLog(rc)
   // assert(ret.total.value == m.convert(rc).total)
   // println(s"The total after convert is ${ret.total.value}") //The total after convert is Money(9570.0,EUR)}
@@ -63,8 +55,6 @@ object Demo extends App {
   // //300GBP(1.1)->330.0EUR
   // //Convert with log then total: Money(9570.0,EUR)
   // //##############
-
-
   // //import app.fmgp.money.instances.all._
   // //import app.fmgp.money.instances.money._
   // //import app.fmgp.money.instances.moneyTree._
@@ -90,11 +80,6 @@ object Demo extends App {
   // //##############
   // println(ret2.total.value)
   // //Money(9689.99,EUR)
-
-
-
-
-
   // // Done try play with derivation and Multiversal Equality
   // // https://dotty.epfl.ch/docs/reference/contextual/derivation.html
   // // https://dotty.epfl.ch/docs/reference/contextual/multiversal-equality.html
