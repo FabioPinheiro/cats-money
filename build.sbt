@@ -2,8 +2,19 @@ name := "cats-money"
 version := "0.1.0-SNAPSHOT"
 organization := "app.fmgp"
 
+val dottyLatestNightly = dottyLatestNightlyBuild.get
+//val dottyVersion = "0.25.0-bin-20200609-a3b417b-NIGHTLY"
 val dottyVersion = "0.24.0-RC1"
 val scala213Version = "2.13.2"
+
+inThisBuild(
+  Seq(
+    organization := "app.fmgp",
+    scalaVersion := dottyLatestNightly, //dottyVersion,
+    crossScalaVersions := Seq(dottyVersion, dottyLatestNightly),
+    updateOptions := updateOptions.value.withLatestSnapshots(false),
+  )
+)
 
 scalacOptions ++= Seq(
   "-encoding",
@@ -25,8 +36,8 @@ scalacOptions ++= Seq(
 lazy val root = project
   .in(file("."))
   .settings(
-    libraryDependencies += "org.scalameta" %% "munit" % "0.7.8" % Test, //("com.lihaoyi" %% "utest" % "0.7.2" % "test").withDottyCompat(scalaVersion.value),
-    testFrameworks += new TestFramework("munit.Framework"),
+    //libraryDependencies += "org.scalameta" %% "munit" % "0.7.8" % Test, //("com.lihaoyi" %% "utest" % "0.7.2" % "test").withDottyCompat(scalaVersion.value),
+    //testFrameworks += new TestFramework("munit.Framework"),
     libraryDependencies ++= Seq(
       ("org.typelevel" %% "cats-core" % "2.2.0-M2").withDottyCompat(scalaVersion.value),
       //("com.chuusai" %% "shapeless" % "2.4.0-M1").withDottyCompat(scalaVersion.value), //v2.4.0-M1
@@ -36,9 +47,9 @@ lazy val root = project
       // ("org.specs2" %% "specs2-core" % "4.3.4" % Test).withDottyCompat(scalaVersion.value),
     ),
     // To make the default compiler and REPL use Dotty
-    scalaVersion := dottyVersion,
+    //scalaVersion := dottyVersion,
     // To cross compile with Dotty and Scala 2
-    crossScalaVersions := Seq(dottyVersion, scala213Version)
+    //crossScalaVersions := Seq(dottyVersion, scala213Version)
   )
 
 // lazy val docs = project

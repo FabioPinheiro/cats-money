@@ -1,8 +1,25 @@
+#Based on https://github.com/milessabin/shapeless/blob/shapeless-3/.travis.yml
 language: scala
+jdk:
+ - openjdk8
 scala:
  - 0.24.0-RC1
+# - 0.25.0-bin-20200609-a3b417b-NIGHTLY
 
-script:
- - sbt clean coverage test
-after_success:
- - sbt coverageReport codacyCoverage
+cache:
+ directories:
+  - $HOME/.cache/coursier
+  - $HOME/.ivy2/cache
+  - $HOME/.sbt
+
+stages:
+  - name: test
+  - name: reportCoverage
+
+jobs:
+ include:
+  - stage: test
+    script: sbt clean compile test
+  - stage: reportCoverage
+    script: sbt coverage test
+    after_success: sbt coverageReport codacyCoverage
