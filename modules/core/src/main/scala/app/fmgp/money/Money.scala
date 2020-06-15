@@ -1,12 +1,12 @@
 package app.fmgp.money
 
 object Money {
-  def apply[T](amount: BigDecimal, t: T): Money[T] = new Money[T](amount, t) {}
-  def fromTuple[T](m: (T, BigDecimal)): Money[T] = Money.apply(m._2, m._1)
+  def apply[T](amount: MoneyAmount, t: T): Money[T] = new Money[T](amount, t) {}
+  def fromTuple[T](m: (T, MoneyAmount)): Money[T] = Money.apply(m._2, m._1)
 }
 
-sealed abstract case class Money[T](amount: BigDecimal, currency: T) derives Eql {
-  //extends scala.math.ScalaNumber with ScalaNumericConversions with Serializable with Ordered[BigDecimal] // Existes a Eql[Number,Number] ...
+sealed abstract case class Money[T](amount: MoneyAmount, currency: T) derives Eql {
+  //extends scala.math.ScalaNumber with ScalaNumericConversions with Serializable with Ordered[MoneyAmount] // Existes a Eql[Number,Number] ...
   // override def doubleValue(): Double = amount.doubleValue
   // override def floatValue(): Float = amount.floatValue
   // override def intValue(): Int = amount.intValue
@@ -24,19 +24,19 @@ sealed abstract case class Money[T](amount: BigDecimal, currency: T) derives Eql
   //def -(that: Money[T]): Money[T] = Money[T](this.amount - that.amount, this.currency)
 
   /** Multiplication of Money */
-  def * (value: BigDecimal):  Money[T] = Money[T](this.amount * value, this.currency)
+  def * (value: MoneyAmount):  Money[T] = Money[T](this.amount * value, this.currency)
   
   /** Multiplication of Money */
-  def / (value: BigDecimal):  Money[T] = Money[T](this.amount / value, this.currency)
+  def / (value: MoneyAmount):  Money[T] = Money[T](this.amount / value, this.currency)
   
   /** Remainder after dividing */
-  def % (value: BigDecimal):  Money[T] = Money[T](this.amount % value, this.currency)
+  def % (value: MoneyAmount):  Money[T] = Money[T](this.amount % value, this.currency)
 
   /** Division and Remainder */
-  def /% (value: BigDecimal):  (Money[T], Money[T]) = {
+  def /% (value: MoneyAmount):  (Money[T], Money[T]) = {
     val aux = this.amount /% value
     (Money[T](aux._1, this.currency), Money[T](aux._2, this.currency))
   }
 }
 //TODO implement basic opetation for Money (in the same type)
-// https://github.com/scala/scala/blob/2.13.x/src/library/scala/math/BigDecimal.scala
+// https://github.com/scala/scala/blob/2.13.x/src/library/scala/math/MoneyAmount.scala

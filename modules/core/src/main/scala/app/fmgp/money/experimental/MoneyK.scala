@@ -1,4 +1,4 @@
-package app.fmgp.money.experimental
+/*package app.fmgp.money.experimental
 
 import cats.instances.bigDecimal.catsKernelStdGroupForBigDecimal
 import cats.instances.map.catsKernelStdMonoidForMap
@@ -18,3 +18,4 @@ case class MoneyK[K](value: scala.collection.immutable.Map[K, BigDecimal]) exten
   def +(k: K, v: BigDecimal): MoneyK[K] = MoneyK[K](value |+| Map(k -> v)) //MoneyK[K](update(k, _ + v))
   def ++(other: MoneyK[K]): MoneyK[K] = MoneyK[K](value |+| other.value)
 }
+*/

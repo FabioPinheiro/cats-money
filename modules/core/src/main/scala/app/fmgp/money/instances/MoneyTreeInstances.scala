@@ -1,3 +1,4 @@
+/*
 package app.fmgp.money.instances
 
 import app.fmgp.money.MoneyTree
@@ -61,30 +62,30 @@ class MoneyTreeMonad extends Monad[MoneyTree] {
     }
 
   /**
-    * Stack Safety for Free implementation
-    * A
-    * B    C    D
-    * E   F       G
-    * H I
-    *
-    * ((E(HI))C(G)) <- all leafs
-    *
-    * A       .        | .
-    * BCD     33       | .
-    * EFCD    22 33    | .
-    * FCD     12 33    | E
-    * HICD    22 12 33 | E
-    * ICD     12 12 33 | HE
-    * CD      -2 12 33 | IHE
-    * CD      -2 33    | (HI)E
-    * CD      23       | (E(HI))
-    * D       13       | C(E(HI))
-    * G       11 13    | C(E(HI))
-    * .       -1 13    | GC(E(HI))
-    * .       -3       | (G)C(E(HI))
-    * .       .        | ((E(HI))C(G))
-    *
-    */
+   * Stack Safety for Free implementation
+   * A
+   * B    C    D
+   * E   F       G
+   * H I
+   *
+   * ((E(HI))C(G)) <- all leafs
+   *
+   * A       .        | .
+   * BCD     33       | .
+   * EFCD    22 33    | .
+   * FCD     12 33    | E
+   * HICD    22 12 33 | E
+   * ICD     12 12 33 | HE
+   * CD      -2 12 33 | IHE
+   * CD      -2 33    | (HI)E
+   * CD      23       | (E(HI))
+   * D       13       | C(E(HI))
+   * G       11 13    | C(E(HI))
+   * .       -1 13    | GC(E(HI))
+   * .       -3       | (G)C(E(HI))
+   * .       .        | ((E(HI))C(G))
+   *
+   */
   override def tailRecM[A, B](x: A)(f: A => MoneyTree[Either[A, B]]): MoneyTree[B] = {
     //    flatMap(f(x)) {
     //      case Left(value) => tailRecM(value)(f)
@@ -119,3 +120,4 @@ class MoneyTreeMonad extends Monad[MoneyTree] {
     loop(List(f(x)), Nil, List.empty)
   }
 }
+*/

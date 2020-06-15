@@ -1,25 +1,11 @@
 package app.fmgp.money
 
-//import cats.kernel.Eq
-//object Currency {
-// def createCompanion[A](func: A => A): Companion[A] =
-//   new Companion[A] {
-//     override type C = A
-//     override def apply(): A = func(Currency.GBP.asInstanceOf[A]) //FIXME
-//   }
-// given companion as Companion [Currency.USD.type] {
-//   type C = Currency.USD.type
-//   def apply() = Currency.USD
-// }
-//}
-
+//import sala.language.strictEquality
 sealed trait Currency //derives Eql
 
 /** Currency represents one currency of the ISO_4217 currencies list
   * @see [[https://en.wikipedia.org/wiki/ISO_4217]]
   */
-
-  //import sala.language.strictEquality
 object AED extends Currency { given Eql[AED.type, AED.type] = Eql.derived } //AED have the numeric code 784
 object AFN extends Currency { given Eql[AFN.type, AFN.type] = Eql.derived } //AFN have the numeric code 971
 object ALL extends Currency { given Eql[ALL.type, ALL.type] = Eql.derived } //ALL have the numeric code 008

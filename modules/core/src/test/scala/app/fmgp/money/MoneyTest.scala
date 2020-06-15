@@ -1,8 +1,5 @@
 package app.fmgp.money
 
-import app.fmgp.money._
-import app.fmgp.money.Currency
-
 class MoneyTest extends munit.FunSuite {
 
   test("Money sum with different currency shound not compile") {

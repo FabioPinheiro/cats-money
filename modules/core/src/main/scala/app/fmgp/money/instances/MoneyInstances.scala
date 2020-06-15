@@ -1,3 +1,4 @@
+/*
 package app.fmgp.money.instances
 
 import app.fmgp.money._
@@ -53,3 +54,4 @@ class MoneyMonoidC[CURRENCY, C <: CURRENCY](
     ///monoidOfManeyC.combine(partialRateConverter.convert(x), partialRateConverter.convert(y))
   override def empty: Money[CURRENCY] = Money[CURRENCY](0, c)
 }
+ */

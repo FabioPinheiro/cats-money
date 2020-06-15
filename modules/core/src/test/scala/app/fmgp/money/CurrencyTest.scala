@@ -1,7 +1,5 @@
 package app.fmgp.money
 
-//import app.fmgp.money.Currency
-
 class CurrencyTest extends munit.FunSuite {
   test("Different currency comparison shound not compile") {
     // Set(2, 1).sorted

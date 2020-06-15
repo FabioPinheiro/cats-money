@@ -1,3 +1,4 @@
+/*
 package app.fmgp.money.experimental
 
 import app.fmgp.money._
@@ -19,3 +20,4 @@ class MoneyZMonoidK extends MonoidK[MoneyZ] {
   override def empty[A]: MoneyZ[A] = MoneyZ[A](0)
   override def combineK[A](x: MoneyZ[A], y: MoneyZ[A]): MoneyZ[A] = MoneyZ[A](x.amount |+| y.amount)
 }
+*/

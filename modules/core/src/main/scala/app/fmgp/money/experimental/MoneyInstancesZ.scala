@@ -1,3 +1,4 @@
+/*
 package app.fmgp.money.experimental
 
 import app.fmgp.money._
@@ -45,3 +46,4 @@ trait MoneyInstancesZ {
 //   override def combineK[A](x: MoneyZWithTag[A], y: MoneyZWithTag[A]): MoneyZWithTag[A] =
 //     MoneyZ[A](x.amount * y.amount).asInstanceOf[MoneyZWithTag[A]]
 // }
+*/

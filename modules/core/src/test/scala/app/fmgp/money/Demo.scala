@@ -1,16 +1,15 @@
 package app.fmgp.money
 
-import cats.Id
-import cats.data.WriterT
-import cats.instances.vector._
-import cats.kernel.Monoid
-import cats.syntax.all._
+import app.fmgp.typeclasses.{_, given _}
+import app.fmgp.money.converter.{_, given _}
+import app.fmgp.money.instances.{_, given _}
 
-/** test:runMain app.fmgp.money.Demo */
+
+/** core/test:runMain app.fmgp.money.Demo */
 object Demo extends App {
 
   /** This is a subset of Currencies that will be used*/
-  type CURRENCY = GBP.type | USD.type | EUR.type
+  //type CURRENCY = GBP.type | USD.type | EUR.type
   //| Currency.JPY.type
   // object Instances extends app.fmgp.money.instances.InstancesForCurrency[CURRENCY]
   // import Instances.all.{given _, _}
@@ -21,14 +20,18 @@ object Demo extends App {
   val d = Money(9000, EUR)
   val e = Money(1, JPY)
 
-  //type MonetaryValue = MoneyTree[Money[CURRENCY]] //FIXME Money is now invarient
+  val eur2jpy = Converter(EUR, JPY)(using (EUR, JPY) => Rate(119.78))
+  println(eur2jpy(Money(1, EUR))) //Money(119.78,app.fmgp.money.JPY)
 
-  // val monadTree = new app.fmgp.money.instances.MoneyTreeMonad
-  // val m1: MonetaryValue = monadTree.pure[MoneyTree](a) :+ b :+ c :+ d
-  // val m2: MonetaryValue = monadTree.pure[MoneyTree](a).concat(Seq(b, c, d))
-  // assert(m == m2)
-  // println(m) //MoneyTree(Money(100,USD), Money(200,USD), Money(300,GBP), Money(9000,EUR)})
-  // println(m.collapse)
+  import ConverterTest.{given _}
+  println(Money(100, EUR).inTo(GBP)) //Money(89.600,app.fmgp.money.GBP)
+
+  val m1 = a.pure :+ b :+ c :+ d
+  val m2 = a.pure.concat(Seq(b, c, d))
+  assert(m1 == m2)
+  println(m1) //MoneyTree(Money(100,USD), Money(200,USD), Money(300,GBP), Money(9000,EUR)})
+  println(m1.collapse)
+
   // // #####################
   // // ### RateConverter ###
   // // #####################
