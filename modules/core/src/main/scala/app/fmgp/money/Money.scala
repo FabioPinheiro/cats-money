@@ -5,7 +5,7 @@ object Money {
   def fromTuple[T](m: (T, MoneyAmount)): Money[T] = Money.apply(m._2, m._1)
 }
 
-sealed abstract case class Money[T](amount: MoneyAmount, currency: T) derives Eql {
+sealed abstract case class Money[T](amount: MoneyAmount, currency: T) derives CanEqual {
   //extends scala.math.ScalaNumber with ScalaNumericConversions with Serializable with Ordered[MoneyAmount] // Existes a Eql[Number,Number] ...
   // override def doubleValue(): Double = amount.doubleValue
   // override def floatValue(): Float = amount.floatValue

@@ -1,8 +1,8 @@
 package app.fmgp.money
 
-import app.fmgp.typeclasses.{_, given _}
-import app.fmgp.money.converter.{_, given _}
-import app.fmgp.money.instances.{_, given _}
+import app.fmgp.typeclasses.{_, given}
+import app.fmgp.money.converter.{_, given}
+import app.fmgp.money.instances.{_, given}
 
 
 /** core/test:runMain app.fmgp.money.Demo */
@@ -23,7 +23,7 @@ object Demo extends App {
   val eur2jpy = Converter(EUR, JPY)(using (EUR, JPY) => Rate(119.78))
   println(eur2jpy(Money(1, EUR))) //Money(119.78,app.fmgp.money.JPY)
 
-  import ConverterTest.{given _}
+  import ConverterTest.{given}
   println(Money(100, EUR).inTo(GBP)) //Money(89.600,app.fmgp.money.GBP)
 
   val m1 = a.pure :+ b :+ c :+ d

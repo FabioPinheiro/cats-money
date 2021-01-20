@@ -19,12 +19,14 @@ class MoneyTest extends munit.FunSuite {
          |Values of types app.fmgp.money.Money[app.fmgp.money.EUR.type] and app.fmgp.money.Money[app.fmgp.money.GBP.type] cannot be compared with == or !=.
          |I found:
          |
-         |    app.fmgp.money.Money.derived$Eql[app.fmgp.money.EUR.type, 
+         |    app.fmgp.money.Money.derived$CanEqual[app.fmgp.money.EUR.type, 
          |      app.fmgp.money.GBP.type
-         |    ](/* missing */implicitly[Eql[app.fmgp.money.EUR.type, app.fmgp.money.GBP.type]]
-         |      )
+         |    ](
+         |      /* missing */
+         |        summon[CanEqual[app.fmgp.money.EUR.type, app.fmgp.money.GBP.type]]
+         |    )
          |
-         |But no implicit values were found that match type Eql[app.fmgp.money.EUR.type, app.fmgp.money.GBP.type].
+         |But no implicit values were found that match type CanEqual[app.fmgp.money.EUR.type, app.fmgp.money.GBP.type].
          |Money(0, EUR) == Money(0, GBP)
          |^ 
          |""".stripMargin

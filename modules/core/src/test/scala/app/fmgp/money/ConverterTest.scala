@@ -2,7 +2,7 @@ package app.fmgp.money
 
 import app.fmgp.money.converter._
 import app.fmgp.money.converter.Rate._
-import app.fmgp.money.ConverterTest.{_, given _}
+import app.fmgp.money.ConverterTest.{_, given}
 
 
 object ConverterTest {
@@ -19,13 +19,11 @@ object ConverterTest {
       }
 
   //given rateA2B[A <: Currency, B <: Currency] as getRate[A, B] {
-  given rateA2B [A, B] as getRate [A, B] {
+  given rateA2B [A, B]: getRate[A, B] with
     def apply(a: A, b: B) = rates2USD(a, USD) combine rates2USD(b, USD).inv
-  }
 
-  given converterBuilderTestSet [Ti, To] (using rate: getRate[Ti, To]) as converterBuilder[Ti, To] {
+  given converterBuilderTestSet[Ti, To] (using rate: getRate[Ti, To]): converterBuilder[Ti, To] with
     def apply(to: To) = (in: Money[Ti]) => Money[To](in.amount * rate(in.currency, to).value, to)
-  }
 }
 
 class ConverterTest extends munit.FunSuite {

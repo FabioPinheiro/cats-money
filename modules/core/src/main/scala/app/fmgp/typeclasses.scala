@@ -21,10 +21,12 @@ object typeclasses {
    * In a post-3.0 future we will have multiple type parameter lists.
    * This way pure call like {{{"".pure[List]}}}
    */
-  def [A, F[_]](x: A).pure(using m: Monad[F]): F[A] = m.pure(x)
+  extension [A, F[_]](x: A)
+    def pure(using m: Monad[F]): F[A] = m.pure(x)
   
   trait SemiGroup[T] {
-    def (x: T).combine(y: T): T
+    extension (x: T)
+      def combine(y: T): T
   }
 
   trait Monoid[T] extends SemiGroup[T] {
@@ -33,35 +35,39 @@ object typeclasses {
 
   object Monoid {
     def apply[T](using m: Monoid[T]) = m
-    def [T: Monoid](xs: List[T]).combineAll: T = xs.foldLeft(Monoid[T].unit)(_ combine _)
+    extension [T: Monoid](xs: List[T])
+      def combineAll: T = xs.foldLeft(Monoid[T].unit)(_ combine _)
   }
 
   trait Functor[F[_]] {
-    def [A, B](original: F[A]).map(mapper: A => B): F[B]
+    extension [A, B](original: F[A])
+      def map(mapper: A => B): F[B]
   }
 
   object Functor {
-    given Functor[List] {
-      def [A, B](original: List[A]).map(mapper: A => B): List[B] = original.map(mapper)
-    }
+    given Functor[List] with
+      extension [A, B](original: List[A])
+        def map(mapper: A => B): List[B] = original.map(mapper)
   }
 
   trait Monad[F[_]] extends Functor[F] { // "A `Monad` for type `F[?]` is a `Functor[F]`" => thus has the `map` ability
     def pure[A](x: A): F[A]
-    def [A, B](x: F[A]).flatMap(f: A => F[B]): F[B]
-    def [A, B](x: F[A]).map(f: A => B) = x.flatMap(f `andThen` pure)
+    extension [A, B](x: F[A]) 
+      def flatMap(f: A => F[B]): F[B]
+    extension [A, B](x: F[A])
+      def map(f: A => B) = x.flatMap(f `andThen` pure)
   }
 
   object Monad {
-    given listMonad as Monad[List] {
+    given listMonad: Monad[List] with
       def pure[A](x: A): List[A] = List(x)
-      def [A, B](xs: List[A]).flatMap(f: A => List[B]): List[B] = xs.flatMap(f)
-    }
+      extension [A, B](xs: List[A])
+        def flatMap(f: A => List[B]): List[B] = xs.flatMap(f)
 
-    given optionMonad as Monad[Option] {
+    given optionMonad: Monad[Option] with
       def pure[A](x: A): Option[A] = Option(x)
-      def [A, B](xs: Option[A]).flatMap(f: A => Option[B]): Option[B] = xs.flatMap(f)
-    }
+      extension [A, B](xs: Option[A])
+        def flatMap(f: A => Option[B]): Option[B] = xs.flatMap(f)
   }
 
   // /** @see [[http://eed3si9n.com/learning-scalaz/Id.html]] */
