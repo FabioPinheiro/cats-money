@@ -1,13 +1,12 @@
-val dottyLatestNightly = dottyLatestNightlyBuild.get
-val dottyVersion = "3.0.0-M3"
-//val dottyVersion = "0.24.0-RC1"
-val scala213Version = "2.13.4"
+//val dottyLatestNightly = dottyLatestNightlyBuild.get
+val dottyVersion = "3.0.0"
+val scala213Version = "2.13.5"
 
 inThisBuild(
   Seq(
     organization := "app.fmgp",
     scalaVersion := dottyVersion, //dottyLatestNightly,
-    crossScalaVersions := Seq(dottyVersion, dottyLatestNightly),
+    //crossScalaVersions := Seq(dottyVersion, dottyLatestNightly),
     updateOptions := updateOptions.value.withLatestSnapshots(false),
   )
 )
@@ -15,7 +14,7 @@ inThisBuild(
 lazy val modules: List[ProjectReference] = List(core)
 
 //val shapeless3Version = "0.0.0+102-730d9eff-SNAPSHOT"
-val shapeless3Version = "3.0.0-M2"
+val shapeless3Version = "3.0.0-M4"
 
 lazy val commonSettings = Seq(
   scalacOptions ++= Seq(
@@ -29,7 +28,7 @@ lazy val commonSettings = Seq(
     //"-noindent"
   ),
   sources in (Compile, doc) := Nil,
-  libraryDependencies += "org.scalameta" %% "munit" % "0.7.20" % Test,
+  libraryDependencies += "org.scalameta" %% "munit" % "0.7.26" % Test,
   testFrameworks += new TestFramework("munit.Framework"),
 )
 
