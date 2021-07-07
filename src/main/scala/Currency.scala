@@ -1,4 +1,4 @@
-sealed trait Currency //derives Eql
+sealed trait Currency //derives CanEqual
 object Currency {
   object EUR extends Currency
   object CHF extends Currency
@@ -12,6 +12,6 @@ The problem is that the Demo should recompile
 
 // sealed trait Currency
 // object Currency {
-//   object EUR extends Currency { given Eql[EUR.type, EUR.type] = Eql.derived }
-//   object CHF extends Currency { given Eql[CHF.type, CHF.type] = Eql.derived }
+//   object EUR extends Currency { given CanEqual[EUR.type, EUR.type] = CanEqual.derived }
+//   object CHF extends Currency { given CanEqual[CHF.type, CHF.type] = CanEqual.derived }
 // }

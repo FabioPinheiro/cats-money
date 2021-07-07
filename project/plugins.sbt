@@ -1,5 +1,3 @@
-addSbtPlugin("ch.epfl.lamp" % "sbt-dotty" % "0.4.1")
-
 /** https://github.com/codacy/sbt-codacy-coverage#sbt-codacy-coverage */
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.1")
 
